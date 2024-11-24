@@ -15,7 +15,7 @@ import os
 class Config:
     USER = os.getenv('MYSQL_USER', 'mysqlu')
     PASSWORD = os.getenv('MYSQL_PASSWORD', '1234567abc')
-    HOST = os.getenv('MYSQL_HOST', 'smysql')  
+    HOST = os.getenv('MYSQL_HOST', 'Dbmysql')  
     PORT = os.getenv('MYSQL_PORT', 3316)
     DATABASE = os.getenv('MYSQL_DATABASE', 'finca')
 
