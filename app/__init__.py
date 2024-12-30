@@ -13,8 +13,14 @@ def create_app():
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
     jwt = JWTManager(app)
 
-    # Configurar CORS para permitir solicitudes desde cualquier origen
-    CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "allow_headers": ["Content-Type", "Authorization"]}})
+        # Configurar CORS para permitir solicitudes desde tu dominio React
+    CORS(app, resources={
+        r"/*": {
+            "origins": "https://mifinca.isladigital.xyz",
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
     
     db.init_app(app)
 
