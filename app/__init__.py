@@ -27,6 +27,7 @@ def create_app():
     # Manejar solicitudes OPTIONS
     @app.before_request
     def handle_options_requests():
+        print(f"entra a options {request.method}")
         if request.method == 'OPTIONS':
             return jsonify({'status': 'ok'}), 200
 
