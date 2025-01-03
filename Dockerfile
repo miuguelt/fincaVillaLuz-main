@@ -13,5 +13,4 @@ COPY . .
 # Expone el puerto que usará la aplicación
 EXPOSE 8081
 
-# Comando para ejecutar la aplicación
-CMD ["python", "run.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8081", "wsgi:app"]
