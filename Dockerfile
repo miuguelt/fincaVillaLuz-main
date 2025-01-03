@@ -1,15 +1,12 @@
 # Usamos la imagen más ligera de Python basada en Alpine
 FROM python:3.12-alpine
+# Continúa con la instalación de dependencias, si es necesario
+WORKDIR /app/fincaBack-main
+# Clona el repositorio público
+RUN git clone https://github.com/miuguelt/fincaBack-main.git
 
-# Establecemos el directorio de trabajo
-WORKDIR /app
-
-# Copiamos los archivos de requisitos y el proyecto
-COPY requirements.txt /app/
-COPY . /app/
-
-# Instalamos las dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /app/fincaBack-main
+RUN pip install -r requirements.txt
 
 # Expone el puerto que usará la aplicación
 EXPOSE 8081
