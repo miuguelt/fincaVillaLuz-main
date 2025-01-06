@@ -14,11 +14,9 @@ def create_app():
     jwt = JWTManager(app)
 
     CORS(app, resources={
-    r"/*": {
-        "origins": ["https://mifinca.isladigital.xyz", "http://localhost:5173"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }})
+        r"/*": {"origins": os.environ.get('CORS_ORIGINS', 'https://mifinca.isladigital.xyz', 'http://localhost:5173').split(","), 
+                                  "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                                  "allow_headers": ["Content-Type", "Authorization"]}})
     
     db.init_app(app)
 
