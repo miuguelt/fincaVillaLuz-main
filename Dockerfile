@@ -1,7 +1,7 @@
 FROM python:3.12-alpine
 
 # Establecer el directorio de trabajo
-WORKDIR /app/fincaBack-main
+WORKDIR /app
 
 # Copiar requirements.txt e instalar dependencias
 COPY requirements.txt .
