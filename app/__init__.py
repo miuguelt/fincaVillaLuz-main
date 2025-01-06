@@ -1,21 +1,38 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-from flask_talisman import Talisman
+
 import os
 
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    
+        # Configuración global de CORS
+    cors = CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": ["https://mifinca.isladigital.xyz"],
+                "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+            }
+        }
+    )
+
+    @app.route('/user', methods=['GET', 'POST'])
+    def user():
+        return jsonify({"message": "User endpoint-------------------------------------------"})
+
+
     app.config.from_object('config.Config')
     app.config['JWT_SECRET_KEY'] = 'super-secret'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
     app.config['PREFERRED_URL_SCHEME'] = 'https'
     jwt = JWTManager(app)
 
-    Talisman(app, content_security_policy=None)
+    
     db.init_app(app)
 
 
