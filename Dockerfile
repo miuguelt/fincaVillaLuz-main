@@ -5,8 +5,9 @@ WORKDIR /app/fincaBack-main
 
 # Copiar requirements.txt e instalar dependencias
 COPY requirements.txt .
+RUN npm install -g npm@11.0.0
 RUN pip install -r requirements.txt
-
+RUN npm audit fix
 # Copiar el resto del código
 COPY . .
 
