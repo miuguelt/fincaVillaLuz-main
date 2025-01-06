@@ -13,11 +13,15 @@ def create_app():
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
     jwt = JWTManager(app)
 
+    cors_origins = os.environ.get('CORS_ORIGINS', 'https://mifinca.isladigital.xyz,http://localhost:5173').split(',')
+
     CORS(app, resources={
-        r"/*": {"origins": os.environ.get('CORS_ORIGINS', 'https://mifinca.isladigital.xyz', 'http://localhost:5173').split(","), 
-                                  "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-                                  "allow_headers": ["Content-Type", "Authorization"]}})
-    
+        r"/*": {
+            "origins": cors_origins, 
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
     db.init_app(app)
 
     # Manejar solicitudes OPTIONS
