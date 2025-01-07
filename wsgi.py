@@ -13,6 +13,19 @@ print(cors_config)
 print(cors_config_str)
 CORS(app, **cors_config)
 
+# Hook para capturar el encabezado Access-Control-Allow-Origin
+@app.after_request
+def log_cors_headers(response):
+    # Imprimir el valor del encabezado Access-Control-Allow-Origin
+    cors_header = response.headers.get('Access-Control-Allow-Origin')
+    if cors_header:
+        print(f"Access-Control-Allow-Origin: {cors_header}")
+    return response
+# Ruta de ejemplo
+@app.route('/example', methods=['GET'])
+def example():
+    return jsonify({"message": "Hello, world!"}), 200
+
 if __name__ == "__main__":
     # Permitir que Gunicorn ejecute la aplicación
     app.run()
