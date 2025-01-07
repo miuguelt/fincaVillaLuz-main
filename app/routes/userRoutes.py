@@ -35,7 +35,7 @@ def get_user_roles():
     roles_data = [{"role": role.value , "count": count} for role, count in roles]
     return jsonify(roles_data)
 
-@cross_origin()
+@cross_origin(origins="https://mifinca.isladigital.xyz") 
 @bp.route('/', methods=['POST'])
 def create_user():
     data = request.get_json()
