@@ -7,12 +7,14 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"*": {"origins": "https://mifinca.isladigital.xyz"}})
 
     app.config.from_object('config.Config')
   
     db.init_app(app)
+    CORS(app, resources={r"*": {"origins": "https://mifinca.isladigital.xyz"}})
 
+    jwt = JWTManager(app)
+    
     from app.routes import (
         userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes, controlRoutes, diseasesRoutes, fieldsRoutes, foodTypesRoutes, geneticImprovementsRoutes, medicationsRoutes, speciesRoutes, treatmentMedicationsRoutes, treatmentsRoutes, treatmentVaccinesRoutes, vaccinesRoutes, vaccinationsRoutes, auth
     )
