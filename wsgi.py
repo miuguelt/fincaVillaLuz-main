@@ -5,4 +5,4 @@ app = create_app()
 
 if __name__ == "__main__":
     # Permitir que Gunicorn ejecute la aplicación
-    app.run()
+    app.run(ssl_context='adhoc')
