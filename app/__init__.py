@@ -48,10 +48,7 @@ def create_app():
         app,
         resources={
             r"/*": {
-                "origins": ["https://mifinca.isladigital.xyz"],
-                "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-                "allow_headers": ["Content-Type", "Authorization"],
-                "supports_credentials": True,
+                "origins": ["https://mifinca.isladigital.xyz"]
             }
         }
     )
