@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
@@ -11,10 +10,9 @@ def create_app():
     app.config.from_object('config.Config')
   
     db.init_app(app)
-    CORS(app, resources={r"*": {"origins": "https://mifinca.isladigital.xyz"}})
 
     jwt = JWTManager(app)
-    
+
     from app.routes import (
         userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes, controlRoutes, diseasesRoutes, fieldsRoutes, foodTypesRoutes, geneticImprovementsRoutes, medicationsRoutes, speciesRoutes, treatmentMedicationsRoutes, treatmentsRoutes, treatmentVaccinesRoutes, vaccinesRoutes, vaccinationsRoutes, auth
     )
@@ -37,5 +35,5 @@ def create_app():
     app.register_blueprint(vaccinesRoutes.bp)
     app.register_blueprint(vaccinationsRoutes.bp)
     app.register_blueprint(auth.bp)    
-
+        
     return app
