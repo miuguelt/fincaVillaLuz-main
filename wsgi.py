@@ -1,7 +1,7 @@
 from app import create_app
 from flask_cors import CORS
 import os
-
+import json
 
 # Crear la aplicación Flask
 app = create_app()
