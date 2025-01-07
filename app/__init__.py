@@ -55,5 +55,11 @@ def create_app():
             }
         }
     )
-    
+
+        # Manejar solicitudes OPTIONS
+    @app.before_request
+    def handle_options_requests():
+        if request.method == 'OPTIONS':
+            return jsonify({'status': 'ok'}), 200
+
     return app
