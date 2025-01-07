@@ -3,22 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
-import os
-
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"/*": {"origins": "https://mifinca.isladigital.xyz"}})
 
     app.config.from_object('config.Config')
-    app.config['JWT_SECRET_KEY'] = 'super-secret'
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
-    jwt = JWTManager(app)
-
-    
+  
     db.init_app(app)
-
 
     from app.routes import (
         userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes, controlRoutes, diseasesRoutes, fieldsRoutes, foodTypesRoutes, geneticImprovementsRoutes, medicationsRoutes, speciesRoutes, treatmentMedicationsRoutes, treatmentsRoutes, treatmentVaccinesRoutes, vaccinesRoutes, vaccinationsRoutes, auth
@@ -41,9 +33,6 @@ def create_app():
     app.register_blueprint(treatmentVaccinesRoutes.bp)
     app.register_blueprint(vaccinesRoutes.bp)
     app.register_blueprint(vaccinationsRoutes.bp)
-    app.register_blueprint(auth.bp)
-
-            # Configuración global de CORS
-    
+    app.register_blueprint(auth.bp)    
 
     return app
