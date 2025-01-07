@@ -9,11 +9,11 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+    cors = CORS(app)
 
     app.config.from_object('config.Config')
     app.config['JWT_SECRET_KEY'] = 'super-secret'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
-    app.config['PREFERRED_URL_SCHEME'] = 'https'
     jwt = JWTManager(app)
 
     
@@ -44,20 +44,6 @@ def create_app():
     app.register_blueprint(auth.bp)
 
             # Configuración global de CORS
-    cors = CORS(
-        app,
-        resources={
-            r"/*": {
-                "origins": ["https://mifinca.isladigital.xyz"]
-            }
-        }
-    )
     
-
-        # Manejar solicitudes OPTIONS
-    @app.before_request
-    def handle_options_requests():
-        if request.method == 'OPTIONS':
-            return jsonify({'status': 'ok'}), 200
 
     return app
