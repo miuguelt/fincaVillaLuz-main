@@ -52,6 +52,7 @@ def create_app():
             }
         }
     )
+    
 
         # Manejar solicitudes OPTIONS
     @app.before_request
