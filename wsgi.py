@@ -8,15 +8,7 @@ from flask import jsonify
 app = create_app()
 
 # Configuración detallada de CORS
-CORS(
-    app,
-    supports_credentials=True,
-    origins=["https://mifinca.isladigital.xyz"],  # Dominios permitidos
-    methods=["GET", "POST", "PUT", "DELETE"],    # Métodos permitidos
-    allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"],  # Encabezados permitidos
-    expose_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin"],  # Encabezados expuestos
-    max_age=3600  # Tiempo de caché para preflight requests
-)
+CORS(app)
 
 # Hook para capturar el encabezado Access-Control-Allow-Origin
 @app.after_request
