@@ -11,7 +11,4 @@ RUN pip install -r requirements.txt
 # Copiar el resto del código
 COPY . .
 
-# Expone el puerto que usará la aplicación
-EXPOSE 8081
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8081", "wsgi:app"]
+CMD ["python", "run.py"]
