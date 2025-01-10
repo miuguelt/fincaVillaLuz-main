@@ -2,13 +2,21 @@ from app import create_app
 from flask_cors import CORS
 import os
 import json
+from flask import jsonify
 
 # Crear la aplicación Flask
 app = create_app()
 
-#CORS(app, supports_credentials=True, origins=["https://mifinca.isladigital.xyz"], methods=["GET", "POST", "PUT", "DELETE"], headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"], expose_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin"], allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin"], max_age=3600)
-
-CORS(app)
+# Configuración detallada de CORS
+CORS(
+    app,
+    supports_credentials=True,
+    origins=["https://mifinca.isladigital.xyz"],  # Dominios permitidos
+    methods=["GET", "POST", "PUT", "DELETE"],    # Métodos permitidos
+    allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"],  # Encabezados permitidos
+    expose_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin"],  # Encabezados expuestos
+    max_age=3600  # Tiempo de caché para preflight requests
+)
 
 # Hook para capturar el encabezado Access-Control-Allow-Origin
 @app.after_request
