@@ -31,8 +31,8 @@ with app.app_context():
 
 if __name__ == "__main__":
 
-    cert_path = '/proxy/cert.pem'
-    key_path = '/proxy/key.pem'
+    cert_path = 'proxy/cert.pem'
+    key_path = 'proxy/key.pem'
     # Obtén el puerto de las variables de entorno o usa 8080 por defecto
     port = int(os.environ.get("PORT", 8081))
     app.run(host="0.0.0.0", port=port, ssl_context=(cert_path, key_path))
