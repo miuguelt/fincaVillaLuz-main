@@ -1,7 +1,7 @@
 import json
 
 # Carga el archivo acme.json
-with open('/data/coolify/proxy/acme.json', 'r') as file:
+with open('proxy/acme.json', 'r') as file:
     acme_data = json.load(file)
 
 # Extrae los certificados para el dominio específico
@@ -13,10 +13,10 @@ cert_pem = cert_data['certificate']
 key_pem = cert_data['key']
 
 # Escribe los archivos cert.pem y key.pem
-with open('/data/coolify/proxy/cert.pem', 'w') as cert_file:
+with open('proxy/cert.pem', 'w') as cert_file:
     cert_file.write(cert_pem)
 
-with open('/data/coolify/proxy/key.pem', 'w') as key_file:
+with open('proxy/key.pem', 'w') as key_file:
     key_file.write(key_pem)
 
 print("Certificados extraídos correctamente.")
