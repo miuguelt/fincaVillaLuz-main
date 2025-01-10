@@ -7,11 +7,8 @@ import json
 app = create_app()
 
 #CORS(app, supports_credentials=True, origins=["https://mifinca.isladigital.xyz"], methods=["GET", "POST", "PUT", "DELETE"], headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"], expose_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin"], allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Origin"], max_age=3600)
-cors_config_str = os.environ.get('CORS_CONFIG')
-cors_config = json.loads(cors_config_str)  # Convert string to dictionary
-print(cors_config)
-print(cors_config_str)
-CORS(app, **cors_config)
+
+CORS(app)
 
 # Hook para capturar el encabezado Access-Control-Allow-Origin
 @app.after_request
@@ -21,6 +18,7 @@ def log_cors_headers(response):
     if cors_header:
         print(f"Access-Control-Allow-Origin: {cors_header}")
     return response
+
 # Ruta de ejemplo
 @app.route('/example', methods=['GET'])
 def example():
