@@ -14,4 +14,4 @@ COPY . .
 # Expone el puerto que usará la aplicación
 EXPOSE 8081
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8081","--workers","4", "wsgi:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8081", "wsgi:app"]
