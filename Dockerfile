@@ -11,6 +11,7 @@ RUN pip install -r requirements.txt
 # Copiar el resto del código
 COPY . .
 
+COPY /data/coolify/proxy/acme.json /app/proxy/acme.json
 RUN python certificados.py
 
 EXPOSE 8081
