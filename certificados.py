@@ -1,22 +1,40 @@
 import json
 
-# Carga el archivo acme.json
-with open('proxy/acme.json', 'r') as file:
-    acme_data = json.load(file)
+def extract_certificates(domain):
+    try:
+        # Carga el archivo acme.json
+        with open('proxy/acme.json', 'r') as file:
+            acme_data = json.load(file)
 
-# Extrae los certificados para el dominio específico
-domain = "finca.isladigital.xyz"  # El dominio para el cual quieres extraer el certificado
+        # Accede a la lista de certificados
+        certificates = acme_data['letsencrypt']['Certificates']
 
-cert_data = acme_data['Certificates'][0]  # Asegúrate de que 'Certificates' contiene la entrada correcta
+        # Busca el certificado para el dominio específico
+        for cert in certificates:
+            if cert['domain']['main'] == domain:
+                cert_pem = cert['certificate']
+                key_pem = cert['key']
 
-cert_pem = cert_data['certificate']
-key_pem = cert_data['key']
+                # Escribe los archivos cert.pem y key.pem
+                with open('proxy/cert.pem', 'w') as cert_file:
+                    cert_file.write(cert_pem)
 
-# Escribe los archivos cert.pem y key.pem
-with open('proxy/cert.pem', 'w') as cert_file:
-    cert_file.write(cert_pem)
+                with open('proxy/key.pem', 'w') as key_file:
+                    key_file.write(key_pem)
 
-with open('proxy/key.pem', 'w') as key_file:
-    key_file.write(key_pem)
+                print(f"Certificados para {domain} extraídos correctamente.")
+                return
 
-print("Certificados extraídos correctamente.")
+        print(f"No se encontró un certificado para el dominio {domain}.")
+    except FileNotFoundError:
+        print("Error: El archivo proxy/acme.json no se encontró.")
+    except KeyError:
+        print("Error: La estructura del archivo acme.json no es la esperada.")
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+
+# Dominio para el cual extraer el certificado
+domain = "finca.isladigital.xyz"
+
+# Extrae los certificados
+extract_certificates(domain)

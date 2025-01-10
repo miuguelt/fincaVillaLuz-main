@@ -13,4 +13,4 @@ COPY . .
 
 EXPOSE 8081
 
-CMD ["python", "run.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8081", "--workers", "4", "wsgi:app"]
