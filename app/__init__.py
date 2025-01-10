@@ -16,7 +16,10 @@ def create_app():
     # Configurar CORS para permitir solicitudes desde cualquier origen
     CORS(app, resources={r"/*": {"origins": "*", 
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-    "allow_headers": ["Content-Type"]}})
+    "allow_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": True
+    }
+    })
     
     db.init_app(app)
 
