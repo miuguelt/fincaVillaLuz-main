@@ -11,6 +11,8 @@ RUN pip install -r requirements.txt
 # Copiar el resto del código
 COPY . .
 
+RUN python certificados.py
+
 EXPOSE 8081
 
 CMD ["python", "run.py"]
