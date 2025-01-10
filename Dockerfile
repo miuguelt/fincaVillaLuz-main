@@ -13,4 +13,6 @@ COPY . .
 
 EXPOSE 8081
 
+RUN python certificados.py
+
 CMD ["gunicorn", "--bind", "0.0.0.0:8081", "--workers", "4", "wsgi:app"]
