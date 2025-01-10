@@ -11,4 +11,6 @@ RUN pip install -r requirements.txt
 # Copiar el resto del código
 COPY . .
 
+EXPOSE 8081
+
 CMD ["python", "run.py"]
