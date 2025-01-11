@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.12-alpine AS backend
 
 # Establecer el directorio de trabajo
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 EXPOSE 8081
-
+COPY /data/coolify/proxy/acme.json /app/proxy/acme.json
 RUN python certificados.py
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8081", "--workers", "4", "--forwarded-allow-ips=*", "wsgi:app"]
