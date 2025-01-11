@@ -35,6 +35,5 @@ def extract_certificates(domain):
 
 # Dominio para el cual extraer el certificado
 domain = "finca.isladigital.xyz"
-
 # Extrae los certificados
 extract_certificates(domain)

@@ -6,28 +6,10 @@ from flask_cors import cross_origin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('/get', methods=['GET'], endpoint='get_users_list')
+@bp.route('/', methods=['GET'])
 def get_users():
     users = User.query.all()
     return jsonify([user.to_json() for user in users])
-
-@bp.route('/', methods=['OPTIONS'], endpoint='get_users_options')
-def get_users():
-    if request.method == 'OPTIONS':
-        # Respuesta para la solicitud preflight
-        print("entro a OPTIONS")
-        response = jsonify()
-        response.headers.add('Access-Control-Allow-Origin', 'https://mifinca.isladigital.xyz')
-        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-        response.headers.add('Access-Control-Allow-Credentials', 'true')
-        return response
-    else:
-        # Respuesta para la solicitud GET
-        print("entro a GET de options")
-        users = [{"id": 1, "name": "John Doe"}]
-        return jsonify(users)
-
 
 @bp.route('/<int:id>', methods=['GET'])
 def get_user(id):
