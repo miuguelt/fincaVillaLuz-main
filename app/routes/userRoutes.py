@@ -6,12 +6,12 @@ from flask_cors import cross_origin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/get', methods=['GET'], endpoint='get_users_list')
 def get_users():
     users = User.query.all()
     return jsonify([user.to_json() for user in users])
 
-@bp.route('/', methods=['OPTIONS'])
+@bp.route('/', methods=['OPTIONS'], endpoint='get_users_options')
 def get_users():
     if request.method == 'OPTIONS':
         # Respuesta para la solicitud preflight
@@ -52,7 +52,6 @@ def get_user_roles():
     roles_data = [{"role": role.value , "count": count} for role, count in roles]
     return jsonify(roles_data)
 
-@cross_origin(origins="https://mifinca.isladigital.xyz") 
 @bp.route('/', methods=['POST'])
 def create_user():
     data = request.get_json()
