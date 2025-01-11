@@ -6,13 +6,13 @@ from sqlalchemy.exc import IntegrityError
 
 bp = Blueprint('breeds', __name__, url_prefix='/breeds')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_breeds():
     breeds = Breeds.query.all()
     return jsonify([breed.to_json() for breed in breeds])
 
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_breed(id):
     breeds = Breeds.query.get_or_404(id)
     return jsonify(breeds.to_json())

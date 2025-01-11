@@ -5,12 +5,12 @@ from sqlalchemy.exc import IntegrityError
 
 bp = Blueprint('animalDiseases', __name__, url_prefix='/animalDiseases')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_animalDiseases():
     animalDiseases = AnimalDiseases.query.all()
     return jsonify([animalDiseases.to_json() for animalDiseases in animalDiseases])
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_animalDisease(id):
     animalDiseases = AnimalDiseases.query.get_or_404(id)
     return jsonify(animalDiseases.to_json())

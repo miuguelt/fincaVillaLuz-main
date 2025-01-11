@@ -5,13 +5,13 @@ from sqlalchemy.exc import IntegrityError
 
 bp = Blueprint('control', __name__, url_prefix='/control')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_users():
     controls = Control.query.all()
     return jsonify([control.to_json() for control in controls])
 
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_control(id):
     control = Control.query.get_or_404(id)
     return jsonify(control.to_json())

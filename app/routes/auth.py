@@ -32,7 +32,7 @@ def login():
    return jsonify(access_token=access_token), 200
    
 
-@bp.route('/protected', methods=['GET'])
+@bp.route('/protected', methods=['GET'], strict_slashes=False)
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()

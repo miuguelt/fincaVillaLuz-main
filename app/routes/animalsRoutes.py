@@ -6,18 +6,18 @@ from sqlalchemy.orm import joinedload
 
 bp = Blueprint('animals', __name__, url_prefix='/animals')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_animals():
     animals = Animals.query.all()
     return jsonify([animal.to_json() for animal in animals])
 
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_animal(id):
     animals = Animals.query.get_or_404(id)
     return jsonify(animals.to_json())
 
-@bp.route('/status', methods=['GET'])
+@bp.route('/status', methods=['GET'], strict_slashes=False)
 def get_animal_status():
     # Consultar la base de datos para contar la cantidad de animales en cada estado
     status_counts = db.session.query(
