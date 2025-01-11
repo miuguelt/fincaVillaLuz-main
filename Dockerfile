@@ -13,7 +13,4 @@ COPY . .
 
 EXPOSE 8081
 
-RUN python certificados.py
-
-#CMD ["gunicorn", "--bind", "0.0.0.0:8081", "--workers", "4", "--forwarded-allow-ips=*", "wsgi:app"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8081", "--workers", "4", "--certfile=proxy/cert.pem", "--keyfile=proxy/key.pem", "wsgi:app"]
+CMD sh -c "python certificados.py && gunicorn --bind 0.0.0.0:8081 --workers 4 --forwarded-allow-ips=* --certfile=proxy/cert.pem --keyfile=proxy/key.pem wsgi:app"
