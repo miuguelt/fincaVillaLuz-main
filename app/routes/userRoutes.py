@@ -6,18 +6,18 @@ from flask_cors import cross_origin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_users():
     users = User.query.all()
     return jsonify([user.to_json() for user in users])
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_user(id):
     user = User.query.get_or_404(id)
     return jsonify(user.to_json())
 
 
-@bp.route('/status', methods=['GET'])
+@bp.route('/status', methods=['GET'], strict_slashes=False)
 def get_user_status():
     status_counts = db.session.query(
         User.status, db.func.count(User.status)
@@ -26,7 +26,7 @@ def get_user_status():
     return jsonify(status_data)
 
 
-@bp.route('/roles', methods=['GET'])
+@bp.route('/roles', methods=['GET'], strict_slashes=False)
 def get_user_roles():
     roles = db.session.query(
         User.role, db.func.count(User.role)
@@ -34,7 +34,7 @@ def get_user_roles():
     roles_data = [{"role": role.value , "count": count} for role, count in roles]
     return jsonify(roles_data)
 
-@bp.route('/', methods=['POST'])
+@bp.route('/', methods=['POST'], strict_slashes=False)
 def create_user():
     data = request.get_json()
     user = User(**data)
@@ -46,7 +46,7 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": str(e.orig)}), 400
 
-@bp.route('/<int:id>', methods=['PUT'])
+@bp.route('/<int:id>', methods=['PUT'], strict_slashes=False)
 def update_user(id):
     user = User.query.get_or_404(id)
     data = request.get_json()
