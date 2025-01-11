@@ -11,7 +11,7 @@ def get_users():
     users = User.query.all()
     return jsonify([user.to_json() for user in users])
 
-@app.route('/', methods=['GET', 'OPTIONS'])
+@bp.route('/', methods=['GET', 'OPTIONS'])
 def get_users():
     if request.method == 'OPTIONS':
         # Respuesta para la solicitud preflight
