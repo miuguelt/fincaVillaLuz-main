@@ -6,12 +6,12 @@ from flask_cors import cross_origin
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('/', methods=['GET'], strict_slashes=False, strict_slashes=False)
+@bp.route('/', methods=['GET'], strict_slashes=False)
 def get_users():
     users = User.query.all()
     return jsonify([user.to_json() for user in users])
 
-@bp.route('/<int:id>', methods=['GET'], strict_slashes=False, strict_slashes=False)
+@bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_user(id):
     user = User.query.get_or_404(id)
     return jsonify(user.to_json())
