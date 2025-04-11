@@ -7,19 +7,12 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-
+    CORS(app)
     app.config.from_object('config.Config')
     app.config['JWT_SECRET_KEY'] = 'super-secret'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
     jwt = JWTManager(app)
- 
-    # Configurar CORS para permitir solicitudes desde cualquier origen
-    CORS(app, resources={r"/*": {"origins": "https://mifinca.isladigital.xyz/*", 
-    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-    "allow_headers": ["Content-Type", "Authorization"],
-    "supports_credentials": True
-    }
-    })
+
     
     db.init_app(app)
 
