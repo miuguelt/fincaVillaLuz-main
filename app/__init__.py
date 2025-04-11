@@ -14,7 +14,7 @@ def create_app():
     jwt = JWTManager(app)
  
     # Configurar CORS para permitir solicitudes desde cualquier origen
-    CORS(app, resources={r"/*": {"origins": "https://mifinca.isladigital.xyz", 
+    CORS(app, resources={r"/*": {"origins": "https://mifinca.isladigital.xyz/*", 
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
