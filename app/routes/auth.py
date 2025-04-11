@@ -15,7 +15,7 @@ def authenticate(identificationDTO, passwordDTO):
             return user_data
     return None
 
-@bp.route('/login', methods=['POST', 'OPTIONS'], strict_slashes=False)
+@bp.route('/login', methods=['POST', 'OPTIONS'])
 def login():
    identificationDto = request.json.get('identification', None)
    passwordDto = request.json.get('password', None)
@@ -32,8 +32,8 @@ def login():
    return jsonify(access_token=access_token), 200
    
 
-@bp.route('/protected', methods=['GET'], strict_slashes=False)
-@jwt_required()
+@bp.route('/protected', methods=['GET'])
+@jwt_required(optional=True)
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
