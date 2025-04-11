@@ -1,6 +1,3 @@
-FROM python:3.12-alpine AS backend
-
-# Establecer el directorio de trabajo
 WORKDIR /app
 
 # Copiar requirements.txt e instalar dependencias
