@@ -40,7 +40,11 @@ def create_app():
     app.register_blueprint(vaccinationsRoutes.bp)
     app.register_blueprint(auth.bp)    
     
-    # Configuración explícita de CORS
-    CORS(app)
-
+    CORS(
+        app,
+        origins=["http://localhost:5173", "https://mifinca.isladigital.xyz"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization"],
+        supports_credentials=True  # <-- Clave para credenciales
+    )
     return app

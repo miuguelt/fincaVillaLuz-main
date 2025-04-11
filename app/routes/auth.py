@@ -15,7 +15,7 @@ def authenticate(identificationDTO, passwordDTO):
             return user_data
     return None
 
-@bp.route('/login', methods=['POST', 'OPTIONS'], strict_slashes=False)
+@bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
    identificationDto = request.json.get('identification', None)
    passwordDto = request.json.get('password', None)
