@@ -41,12 +41,6 @@ def create_app():
     app.register_blueprint(auth.bp)    
     
     # Configuración explícita de CORS
-    CORS(
-        app,
-        origins=["https://mifinca.isladigital.xyz"],  # Dominio del frontend
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "Authorization"],
-        supports_credentials=True
-    )
-    
+    CORS(app)
+
     return app
