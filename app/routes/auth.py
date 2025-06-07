@@ -17,14 +17,15 @@ def authenticate(identificationDTO, passwordDTO):
 
 @bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
+    print("Antes de data", flush=True)
     # Imprimir el contenido bruto de la petición
-    print("Request data raw:", request.data)
+    print("Request data raw:", request.data, flush=True)
 
     # Imprimir el JSON parseado (puede ser None si no es JSON válido)
-    print("Request JSON:", request.get_json())
+    print("Request JSON:", request.get_json(), flush=True)
     identificationDto = request.json.get('identification', None)
     passwordDto = request.json.get('password', None)
-
+    print("Antes de data", identificationDto, passwordDto, flush=True)
     if identificationDto is None or passwordDto is None:
       return jsonify({"error": "Identificacion y contraseña son requeridos"}), 400
 
