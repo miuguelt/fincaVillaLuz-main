@@ -13,25 +13,30 @@ def authenticate(identificationDTO, passwordDTO):
 @bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
     print("Antes de data", flush=True)
-    identificationDto = request.json.get('identification', None)
-    passwordDto = request.json.get('password', None)
-    print(f"Identificación: {identificationDto}, Contraseña: {passwordDto}", flush=True)
+    # Imprimir el contenido bruto de la petición
+    print("Request data raw:", request.data, flush=True)
+
+    # Parse the JSON and store it in a variable
+    data = request.get_json()
+    print("Request JSON:", data, flush=True)
+
+    if not data:
+        return jsonify({"error": "Petición no contiene JSON"}), 400
+
+    identificationDto = data.get('identification', None)
+    passwordDto = data.get('password', None)
+    
+    print(f"Valores extraidos - Identificacion: {identificationDto}, Contraseña: {passwordDto}", flush=True)
 
     if not identificationDto or not passwordDto:
-        return jsonify({"error": "Identificación y contraseña son requeridos"}), 400
+        return jsonify({"error": "Identificacion y contraseña son requeridos"}), 400
 
     user = authenticate(identificationDto, passwordDto)
+    print(user)
     if not user:
-        return jsonify({"error": "Identificación o contraseña incorrecta Otro error"}), 401
+        return jsonify({"error": "Identificacion o contraseña incorecta"}), 401
 
-    identity = {
-        "identification": user.identification,
-        "role": user.role.value,
-        "fullname": user.fullname,
-        "email": user.email,
-        "phone": user.phone,
-        "address": user.address
-    }
+    identity = {"identification": user.identification, "role": user.role.value, "fullname": user.fullname, "email": user.email, "phone": user.phone, "address": user.address}
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
 
