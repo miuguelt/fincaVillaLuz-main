@@ -32,6 +32,7 @@ def login():
 
     if not user:
         return jsonify({"error": "Identificacion o contraseña incorecta"}), 401
+    print("fin2", flush=True)
 
     # Create tokens and response
     identity = {
@@ -44,11 +45,12 @@ def login():
     }
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
+    print("fin 1", flush=True)
 
     response = jsonify({"login": True})
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    
+    print("fin", flush=True)
     return response
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
