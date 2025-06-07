@@ -7,6 +7,13 @@ class Config:
     HOST = os.getenv('DB_HOST')  
     PORT = os.getenv('DB_PORT')
     DATABASE = os.getenv('DB_NAME')
+
+    JWT_TOKEN_LOCATION = ['cookies']
+    JWT_COOKIE_SECURE = True  # Solo HTTPS en producción
+    JWT_COOKIE_SAMESITE = 'Lax'  # o 'Strict'
+    JWT_COOKIE_CSRF_PROTECT = False  # Puedes activar CSRF token si deseas
+    JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
+    JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
     JWT_SECRET_KEY = 'super-secret'  # Cambia esto por una clave segura
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)  # Ejemplo: 15 minutos
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies
 
 from app.models import User
 
@@ -17,21 +17,26 @@ def authenticate(identificationDTO, passwordDTO):
 
 @bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
-   identificationDto = request.json.get('identification', None)
-   passwordDto = request.json.get('password', None)
+    identificationDto = request.json.get('identification', None)
+    passwordDto = request.json.get('password', None)
 
-   if identificationDto is None or passwordDto is None:
+    if identificationDto is None or passwordDto is None:
       return jsonify({"error": "Identificacion y contraseña son requeridos"}), 400
 
-   user = authenticate(identificationDto, passwordDto)
-   print(user)
-   if not user:
+    user = authenticate(identificationDto, passwordDto)
+    print(user)
+    if not user:
       return jsonify({"error": "Identificacion o contraseña incorecta"}), 401
 
-   identity={"identification": user.identification, "role": user.role.value, "fullname": user.fullname, "email": user.email, "phone": user.phone, "address": user.address}
-   access_token = create_access_token(identity=identity)
-   refresh_token = create_refresh_token(identity=identity)
-   return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+    identity={"identification": user.identification, "role": user.role.value, "fullname": user.fullname, "email": user.email, "phone": user.phone, "address": user.address}
+    access_token = create_access_token(identity=identity)
+    refresh_token = create_refresh_token(identity=identity)
+
+    response = jsonify(access_token=access_token)
+    set_refresh_cookies(response, refresh_token)
+
+    return response, 200
+
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
