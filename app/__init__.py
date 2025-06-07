@@ -1,22 +1,23 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS
+from flask_cors import CORS 
 
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
-    jwt = JWTManager(app)
-
     
+    jwt = JWTManager(app) 
+
     db.init_app(app)
 
-    jwt = JWTManager(app)
-
     from app.routes import (
-        userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes, controlRoutes, diseasesRoutes, fieldsRoutes, foodTypesRoutes, geneticImprovementsRoutes, medicationsRoutes, speciesRoutes, treatmentMedicationsRoutes, treatmentsRoutes, treatmentVaccinesRoutes, vaccinesRoutes, vaccinationsRoutes, auth
+        userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes, 
+        controlRoutes, diseasesRoutes, fieldsRoutes, foodTypesRoutes, geneticImprovementsRoutes, 
+        medicationsRoutes, speciesRoutes, treatmentMedicationsRoutes, treatmentsRoutes, 
+        treatmentVaccinesRoutes, vaccinesRoutes, vaccinationsRoutes, auth
     )
 
     app.register_blueprint(userRoutes.bp)
@@ -36,21 +37,21 @@ def create_app():
     app.register_blueprint(treatmentVaccinesRoutes.bp)
     app.register_blueprint(vaccinesRoutes.bp)
     app.register_blueprint(vaccinationsRoutes.bp)
-    app.register_blueprint(auth.bp)    
+    app.register_blueprint(auth.bp) 
     
+    # ¡CONFIGURACIÓN DE CORS ESENCIAL!
+    # ESTO DEBE SER LA LISTA DE ORÍGENES EXPLÍCITOS.
+    # El *NO FUNCIONA* con supports_credentials=True.
     CORS(
         app,
-        # **Aquí va la lista EXACTA de tus orígenes de frontend.**
-        # Si tu frontend en desarrollo es HTTP, debes incluir HTTP.
-        # Si tu frontend en desarrollo es HTTPS, debes incluir HTTPS.
-        # Siempre incluye la URL de tu frontend de producción.
         origins=[
-            "http://localhost:5173",    # Para tu desarrollo local en HTTP
-            "https://localhost:5173",   # Para tu desarrollo local en HTTPS (MUY RECOMENDADO)
+            "http://localhost:5173",    # Frontend local (HTTP) - Temporal, ver Paso 2
+            "https://localhost:5173",   # Frontend local (HTTPS) - PREFERIDO
             "https://finca.isladigital.xyz" # Tu dominio de frontend en producción
         ],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], # Asegúrate de incluir OPTIONS para preflight
-        allow_headers=["Content-Type", "Authorization"], # Asegúrate de que estos encabezados se permitan
-        supports_credentials=True # ABSOLUTAMENTE NECESARIO para que las cookies funcionen con CORS
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+        allow_headers=["Content-Type", "Authorization"], 
+        supports_credentials=True 
     )
+
     return app
