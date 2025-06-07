@@ -65,4 +65,5 @@ def refresh():
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
+    print("fin2", current_user, flush=True)
     return jsonify(logged_in_as=current_user), 200
