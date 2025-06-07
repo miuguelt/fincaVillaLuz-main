@@ -59,6 +59,7 @@ def refresh():
     new_token = create_access_token(identity=current_user)
     response = jsonify({'refresh': True})
     set_access_cookies(response, new_token)
+    print("set access token", response, flush=True)
     return response
 
 @bp.route('/protected', methods=['GET'])
