@@ -40,7 +40,7 @@ def create_app():
     
     CORS(
         app,
-        origins=["http://localhost:5173", "https://mifinca.isladigital.xyz"],
+        origins=["*"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],
         supports_credentials=True  # <-- Clave para credenciales

@@ -55,16 +55,15 @@ def login():
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    current_user_identity = get_jwt_identity()
+    current_user_identity = get_jwt_identity() 
     new_access_token = create_access_token(identity=current_user_identity)
-    
+
     response = jsonify({
         'refresh': True,
-        'logged_in_as': current_user_identity # <-- ¡CAMBIO CLAVE! AÑADIR ESTO
+        'logged_in_as': current_user_identity # <-- This is still missing in your provided code
     })
-    
+    print("-------fin2-------------------------", response, flush=True)
     set_access_cookies(response, new_access_token)
-    print("set access token ---------------------------", response, flush=True) # Keep this log
     return response
 
 @bp.route('/protected', methods=['GET'])
