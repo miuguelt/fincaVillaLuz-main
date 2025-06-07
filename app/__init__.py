@@ -40,9 +40,17 @@ def create_app():
     
     CORS(
         app,
-        origins=["*"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "Authorization"],
-        supports_credentials=True  # <-- Clave para credenciales
+        # **Aquí va la lista EXACTA de tus orígenes de frontend.**
+        # Si tu frontend en desarrollo es HTTP, debes incluir HTTP.
+        # Si tu frontend en desarrollo es HTTPS, debes incluir HTTPS.
+        # Siempre incluye la URL de tu frontend de producción.
+        origins=[
+            "http://localhost:5173",    # Para tu desarrollo local en HTTP
+            "https://localhost:5173",   # Para tu desarrollo local en HTTPS (MUY RECOMENDADO)
+            "https://finca.isladigital.xyz" # Tu dominio de frontend en producción
+        ],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], # Asegúrate de incluir OPTIONS para preflight
+        allow_headers=["Content-Type", "Authorization"], # Asegúrate de que estos encabezados se permitan
+        supports_credentials=True # ABSOLUTAMENTE NECESARIO para que las cookies funcionen con CORS
     )
     return app
