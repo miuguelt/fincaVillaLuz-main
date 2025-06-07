@@ -17,6 +17,11 @@ def authenticate(identificationDTO, passwordDTO):
 
 @bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
+    # Imprimir el contenido bruto de la petición
+    print("Request data raw:", request.data)
+
+    # Imprimir el JSON parseado (puede ser None si no es JSON válido)
+    print("Request JSON:", request.get_json())
     identificationDto = request.json.get('identification', None)
     passwordDto = request.json.get('password', None)
 
