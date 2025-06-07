@@ -5,36 +5,33 @@ from app.models import User
 
 bp = Blueprint('auth',__name__)
 
-
 def authenticate(identificationDTO, passwordDTO):
-    udata = User.query.all()
-    for user_data in udata:
-        identification = user_data.identification
-        password = user_data.password
-        if identification == identificationDTO and password == passwordDTO:
-            return user_data
+    user = User.query.filter_by(identification=identificationDTO).first()
+    if user and user.password == passwordDTO:
+        return user
     return None
-
 @bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
     print("Antes de data", flush=True)
-    # Imprimir el contenido bruto de la petición
-    print("Request data raw:", request.data, flush=True)
-
-    # Imprimir el JSON parseado (puede ser None si no es JSON válido)
-    print("Request JSON:", request.get_json(), flush=True)
     identificationDto = request.json.get('identification', None)
     passwordDto = request.json.get('password', None)
-    print("Antes de data", identificationDto, passwordDto, flush=True)
-    if identificationDto is None or passwordDto is None:
-      return jsonify({"error": "Identificacion y contraseña son requeridos"}), 400
+    print(f"Identificación: {identificationDto}, Contraseña: {passwordDto}", flush=True)
+
+    if not identificationDto or not passwordDto:
+        return jsonify({"error": "Identificación y contraseña son requeridos"}), 400
 
     user = authenticate(identificationDto, passwordDto)
-    print(user)
     if not user:
-      return jsonify({"error": "Identificacion o contraseña incorecta"}), 401
+        return jsonify({"error": "Identificación o contraseña incorrecta Otro error"}), 401
 
-    identity={"identification": user.identification, "role": user.role.value, "fullname": user.fullname, "email": user.email, "phone": user.phone, "address": user.address}
+    identity = {
+        "identification": user.identification,
+        "role": user.role.value,
+        "fullname": user.fullname,
+        "email": user.email,
+        "phone": user.phone,
+        "address": user.address
+    }
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
 
@@ -53,7 +50,7 @@ def refresh():
     return response
 
 @bp.route('/protected', methods=['GET'])
-@jwt_required(optional=True)
+@jwt_required()
 def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
