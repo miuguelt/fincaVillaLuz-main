@@ -50,7 +50,7 @@ def login():
     response = jsonify({"login": True})
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-    print("fin", flush=True)
+    print("fin ", response, response.headers, flush=True)
     return response
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
