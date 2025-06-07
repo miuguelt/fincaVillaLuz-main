@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies, set_access_cookies
 
 from app.models import User
 
@@ -32,17 +32,20 @@ def login():
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
 
-    response = jsonify(access_token=access_token)
+    response = jsonify({"login": True})
+    set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
-
-    return response, 200
+    return response
 
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
     current_user = get_jwt_identity()
-    new_access_token = create_access_token(identity=current_user)
-    return jsonify(access_token=new_access_token), 200
+    new_token = create_access_token(identity=current_user)
+    response = jsonify({'refresh': True})
+    set_access_cookies(response, new_token)
+    return response
+
 @bp.route('/protected', methods=['GET'])
 @jwt_required(optional=True)
 def protected():
