@@ -31,7 +31,7 @@ class Config:
 
     # Configuración crítica para producción
     JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'False').lower() == 'False'
-    JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', ".isladigital.xyz")  # Debe estar definida en producción
+    JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', "mifinca.isladigital.xyz")  # Debe estar definida en producción
     JWT_COOKIE_PATH = '/'
     JWT_COOKIE_SAMESITE = 'Lax'  # Permitir cross-site cookies con Secure
     JWT_ACCESS_COOKIE_PATH = '/'
