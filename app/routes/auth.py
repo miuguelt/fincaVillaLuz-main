@@ -41,6 +41,8 @@ def login():
     })
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
+
+    print("-------login-------------------------", response, flush=True)
     return response
 
 @bp.route('/refresh', methods=['POST'])
