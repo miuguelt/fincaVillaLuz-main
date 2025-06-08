@@ -18,9 +18,9 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = 2592000 
     JWT_COOKIE_SAMESITE = os.getenv('JWT_COOKIE_SAMESITE', None)
     JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', True)
-    #JWT_COOKIE_PATH = '/'
-    #JWT_ACCESS_COOKIE_PATH = '/'
-    #JWT_REFRESH_COOKIE_PATH = '/refresh' 
+    JWT_COOKIE_PATH = '/'
+    JWT_ACCESS_COOKIE_PATH = '/'
+    JWT_REFRESH_COOKIE_PATH = '/refresh' 
 
 
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
