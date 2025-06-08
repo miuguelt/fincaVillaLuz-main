@@ -239,8 +239,8 @@ def protected():
         print(f"Traceback: {traceback.format_exc()}", flush=True)
         
         return jsonify(error=str(e), error_type=type(e).__name__), 401
-@bp.route('/debug-jwt-config', methods=['GET'])
-def debug_jwt_config():
+@bp.route('/debug-jwt-config1', methods=['GET'])
+def debug_jwt_config1():
     from flask import current_app
     return jsonify({
         'jwt_secret_key_set': bool(current_app.config.get('JWT_SECRET_KEY')),
