@@ -17,7 +17,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = 900   # Ejemplo: 15 minutos
     JWT_REFRESH_TOKEN_EXPIRES = 2592000 
     JWT_COOKIE_SAMESITE = os.getenv('JWT_COOKIE_SAMESITE', "Lax")  # Puede ser 'Lax', 'Strict' o 'None'
-    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', True)
+    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', False)
     JWT_COOKIE_PATH = '/'
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/refresh' 
