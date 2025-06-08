@@ -18,8 +18,8 @@ class Config:
     # =====================================
     
     # Clave secreta JWT (CRÍTICO: debe ser la misma siempre)
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_urlsafe(32))  # Valor por defecto solo para desarrollo
-    
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')      # Valor por defecto solo para desarrollo
+    print(f"JWT_SECRET_KEY: {JWT_SECRET_KEY}", flush=True)  # Debugging para verificar la clave
     # Ubicación del token (solo cookies para tu caso)
     JWT_TOKEN_LOCATION = ['cookies']
     
