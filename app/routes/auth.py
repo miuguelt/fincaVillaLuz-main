@@ -16,7 +16,7 @@ def authenticate(identificationDTO, passwordDTO):
 def login():
     identificationDto = request.json.get('identification', None)
     passwordDto = request.json.get('password', None)
-
+    print("-------login-------------------------", identificationDto, passwordDto, flush=True)
     if not identificationDto or not passwordDto:
         return jsonify({"error": "Identificación y contraseña son requeridos"}), 400
 
