@@ -39,10 +39,10 @@ def login():
         "login": True,
         "logged_in_as": identity  # Incluye los datos del usuario
     })
-    
+
     response = jsonify({"login": True, "logged_in_as": identity})
-    set_access_cookies(response, access_token, domain="finca.isladigital.xyz", path="/", samesite="None", secure=True)
-    set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz", path="/", samesite="None", secure=True)
+    set_access_cookies(response, access_token, domain="finca.isladigital.xyz", samesite="None", secure=True)
+    set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz",  samesite="None", secure=True)
     return response
 
 @bp.route('/refresh', methods=['POST'])
