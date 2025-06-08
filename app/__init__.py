@@ -108,37 +108,6 @@ def create_app(config_name='production'):
             'error': str(error)
         }, 401
 
-    # Nuevo handler para errores de verificación de firma
-    @jwt.decode_complete_token_loader
-    def decode_complete_token_callback(encoded_token):
-        """Handler personalizado para debugging de decodificación de tokens"""
-        import jwt as pyjwt
-        
-        try:
-            # Intentar decodificar sin verificar firma (solo para debug)
-            unverified = pyjwt.decode(encoded_token, options={"verify_signature": False})
-            
-            print("=" * 40, flush=True)
-            print("JWT DECODE DEBUG", flush=True)
-            print("=" * 40, flush=True)
-            print(f"Token payload (unverified): {unverified}", flush=True)
-            
-            # Verificar si está expirado
-            exp_timestamp = unverified.get('exp', 0)
-            if exp_timestamp:
-                exp_utc = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
-                now_utc = datetime.now(timezone.utc)
-                is_expired = now_utc > exp_utc
-                print(f"Token expiry check: {exp_utc.isoformat()} (expired: {is_expired})", flush=True)
-            
-            print("=" * 40, flush=True)
-            
-        except Exception as decode_error:
-            print(f"Error in decode debug: {decode_error}", flush=True)
-        
-        # Retornar None para que Flask-JWT-Extended use su decodificación normal
-        return None
-
     # Handler para errores generales de JWT
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
