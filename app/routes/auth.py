@@ -41,8 +41,8 @@ def login():
     })
 
     response = jsonify({"login": True, "logged_in_as": identity}) 
-    set_access_cookies(response, access_token) 
-    set_refresh_cookies(response, refresh_token)
+    set_access_cookies(response, access_token, domain="finca.isladigital.xyz") 
+    set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz")
     print("inicio de sesion", flush=True)
     return response
 
@@ -56,7 +56,7 @@ def refresh():
         'refresh': True,    
         'logged_in_as': current_user_identity # <-- This is still missing in your provided code
     })
-    set_access_cookies(response, new_access_token)
+    set_access_cookies(response, new_access_token, domain="finca.isladigital.xyz")
     print("-------fin2-------------------------", response, flush=True)
     print("refresh token generado:", new_access_token, flush=True)
     return response
