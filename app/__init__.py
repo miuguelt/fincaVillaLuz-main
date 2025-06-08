@@ -32,23 +32,6 @@ def create_app(config_name='production'):
 
     jwt = JWTManager(app)
 
-    # DEBUG: Imprimir configuración JWT crítica al inicio
-    print("=" * 50, flush=True)
-    print("JWT CONFIGURATION DEBUG", flush=True)
-    print("=" * 50, flush=True)
-    print(f"Config name: {config_name}", flush=True)
-    print(f"JWT_SECRET_KEY length: {len(app.config.get('JWT_SECRET_KEY', ''))}", flush=True)
-    print(f"JWT_SECRET_KEY starts with: {app.config.get('JWT_SECRET_KEY', '')[:10]}...", flush=True)
-    print(f"JWT_ACCESS_TOKEN_EXPIRES: {app.config.get('JWT_ACCESS_TOKEN_EXPIRES')}", flush=True)
-    print(f"JWT_REFRESH_TOKEN_EXPIRES: {app.config.get('JWT_REFRESH_TOKEN_EXPIRES')}", flush=True)
-    print(f"JWT_TOKEN_LOCATION: {app.config.get('JWT_TOKEN_LOCATION')}", flush=True)
-    print(f"JWT_COOKIE_DOMAIN: {app.config.get('JWT_COOKIE_DOMAIN')}", flush=True)
-    print(f"JWT_COOKIE_SECURE: {app.config.get('JWT_COOKIE_SECURE')}", flush=True)
-    print(f"JWT_COOKIE_CSRF_PROTECT: {app.config.get('JWT_COOKIE_CSRF_PROTECT')}", flush=True)
-    print(f"JWT_ACCESS_COOKIE_NAME: {app.config.get('JWT_ACCESS_COOKIE_NAME')}", flush=True)
-    print(f"JWT_REFRESH_COOKIE_NAME: {app.config.get('JWT_REFRESH_COOKIE_NAME')}", flush=True)
-    print(f"JWT_COOKIE_SAMESITE: {app.config.get('JWT_COOKIE_SAMESITE')}", flush=True)
-    print("=" * 50, flush=True)
 
     # Handlers JWT con debugging detallado
     @jwt.expired_token_loader
