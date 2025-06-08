@@ -13,6 +13,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = os.getenv('FLASK_ENV') == 'True'
+    JWT_COOKIE_HTTPONLY = True
 
     # JWT Configuration
     _jwt_secret_from_env = os.getenv('JWT_SECRET_KEY', 'Tq8L0Rd9sXkZ2YpQ5mF7wN1vK3rL8jPb')
@@ -69,7 +70,7 @@ class ProductionConfig(Config):
         print("✅ cookie secure:", cls.JWT_COOKIE_SECURE, flush=True)
         print("✅ access token expires:", cls.JWT_ACCESS_TOKEN_EXPIRES, flush=True)
         print("✅ refresh token enabled:", cls.JWT_REFRESH_TOKEN_ENABLED, flush=True)
-        
+
         print("✅ ProductionConfig inicializada correctamente.", flush=True)
 
 config = {

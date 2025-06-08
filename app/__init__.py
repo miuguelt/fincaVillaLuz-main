@@ -35,6 +35,14 @@ def create_app(config_name='production'):
             'expired_at_utc': exp_utc.isoformat(),
             'current_time_utc': now_utc.isoformat()
         }, 401
+    
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return {'msg': 'Invalid token provided----------'}, 422
+
+    @jwt.unauthorized_loader
+    def missing_token_callback(error):
+        return {'msg': 'Missing token in request-------------'}, 401
 
     db.init_app(app)
 
