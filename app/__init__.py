@@ -7,7 +7,7 @@ from config import config
 
 db = SQLAlchemy()
 
-def create_app(config_name='development'):
+def create_app(config_name='production'):
     app = Flask(__name__)
     app_config = config[config_name]
     app.config.from_object(app_config)

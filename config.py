@@ -27,14 +27,14 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
-    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'False').lower() == 'true'
+    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'True').lower() == 'true'
     JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN') or '.isladigital.xyz'
     JWT_COOKIE_PATH = '/'
     JWT_COOKIE_SAMESITE = 'Lax'
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/'
-    JWT_COOKIE_CSRF_PROTECT = False
-    JWT_CSRF_IN_COOKIES = False
+    JWT_COOKIE_CSRF_PROTECT = True
+    JWT_CSRF_IN_COOKIES = True
     JWT_REFRESH_TOKEN_ENABLED = True
     JWT_HEADER_NAME = 'Authorization'
     JWT_HEADER_TYPE = 'Bearer'
