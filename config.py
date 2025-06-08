@@ -9,10 +9,10 @@ class Config:
     PORT = os.getenv('DB_PORT')
     DATABASE = os.getenv('DB_NAME')
 
-    #JWT_TOKEN_LOCATION = ['cookies']
+    JWT_TOKEN_LOCATION = ['cookies']
     JWT_COOKIE_CSRF_PROTECT = False  # Puedes activar CSRF token si deseas
-    #JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
-    #JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
+    JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
+    JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_urlsafe(24))  
     JWT_ACCESS_TOKEN_EXPIRES = 900   # Ejemplo: 15 minutos
     JWT_REFRESH_TOKEN_EXPIRES = 2592000 
