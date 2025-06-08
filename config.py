@@ -47,31 +47,26 @@ class DevelopmentConfig(Config):
     JWT_COOKIE_DOMAIN = 'localhost'
 
 class ProductionConfig(Config):
-    DEBUG = False
+    DEBUG = False 
 
-    @classmethod
-    def init_app(cls, app):
-        # Validar variables críticas en producción
-        required_env = [
-            ('JWT_SECRET_KEY', cls.JWT_SECRET_KEY),
-            ('JWT_COOKIE_DOMAIN', cls.JWT_COOKIE_DOMAIN)
-        ]
-        for var, value in required_env:
-            if not value:
-                raise RuntimeError(f"❌ {var} no definida en entorno de producción.")
+    _production_jwt_secret = os.getenv('JWT_SECRET_KEY')
+    if not _production_jwt_secret:
+        # Esto es lo que debe pasar en producción si la ENV no está seteada.
+        raise ValueError("JWT_SECRET_KEY environment variable MUST be set in production for security.")
+    JWT_SECRET_KEY = _production_jwt_secret # Asignar la clave validada
 
-        # Forzar configuración segura
-        cls.JWT_COOKIE_SECURE = True
-        cls.JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
-        cls.JWT_COOKIE_SAMESITE = 'Lax'
-        cls.JWT_COOKIE_DOMAIN = cls.JWT_COOKIE_DOMAIN.rstrip('.')  # Eliminar punto si existe
-        print("✅ secrey key:", cls.JWT_SECRET_KEY, flush=True)
-        print("✅ cookie domain:", cls.JWT_COOKIE_DOMAIN, flush=True)
-        print("✅ cookie secure:", cls.JWT_COOKIE_SECURE, flush=True)
-        print("✅ access token expires:", cls.JWT_ACCESS_TOKEN_EXPIRES, flush=True)
-        print("✅ refresh token enabled:", cls.JWT_REFRESH_TOKEN_ENABLED, flush=True)
+    JWT_COOKIE_SECURE = True # Siempre True en producción (HTTPS)
 
-        print("✅ ProductionConfig inicializada correctamente.", flush=True)
+    _production_jwt_cookie_domain = os.getenv('JWT_COOKIE_DOMAIN')
+    if not _production_jwt_cookie_domain:
+        raise ValueError("JWT_COOKIE_DOMAIN environment variable MUST be set in production for cookie security.")
+    JWT_COOKIE_DOMAIN = _production_jwt_cookie_domain
+
+    # JWT_ACCESS_TOKEN_EXPIRES y JWT_REFRESH_TOKEN_EXPIRES deberían estar aquí con valores de producción
+    # (ej. 30 minutos y 7 días respectivamente).
+    # Como tienes 1 día y 30 días, eso está bien.
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
 config = {
     'development': DevelopmentConfig,
