@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app,redirect, url_for
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -82,8 +82,8 @@ def login():
             response, 
             refresh_token
         )
-        protected()
-        return response
+        
+        return redirect(url_for('auth.protected')), 302
 
     except Exception as e:
         current_app.logger.error(f"Error en login: {str(e)}")
