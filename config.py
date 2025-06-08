@@ -65,15 +65,16 @@ class DevelopmentConfig(Config):
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)  # Tokens más largos en desarrollo
 
 class ProductionConfig(Config):
-    """Configuración específica para producción"""
     DEBUG = False
-    JWT_COOKIE_SECURE = True   # Solo HTTPS en producción
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)  # Tokens más cortos en producción
+    JWT_COOKIE_SECURE = True
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     
-    # En producción, asegúrate de tener una clave secreta fija
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
-    if not JWT_SECRET_KEY:
+    # Validar JWT_SECRET_KEY antes de asignarlo
+    jwt_secret = os.getenv(secrets.token_urlsafe(32))
+    if not jwt_secret:
         raise ValueError("JWT_SECRET_KEY debe estar definida en producción")
+    
+    JWT_SECRET_KEY = jwt_secret
 
 # Configuración por defecto
 config = {
