@@ -41,8 +41,8 @@ def login():
     })
 
     response = jsonify({"login": True, "logged_in_as": identity}) 
-    set_access_cookies(response, access_token, domain="mifinca.isladigital.xyz") 
-    set_refresh_cookies(response, refresh_token, domain="mifinca.isladigital.xyz")
+    set_access_cookies(response, access_token, domain="https://mifinca.isladigital.xyz") 
+    set_refresh_cookies(response, refresh_token, domain="https://mifinca.isladigital.xyz")
     print("inicio de sesion", flush=True)
     return response
 
