@@ -17,9 +17,10 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_COOKIE_SAMESITE = "None"
     JWT_COOKIE_SECURE = True
+    JWT_COOKIE_DOMAIN = "mifinca.isladigital.xyz" 
     JWT_COOKIE_PATH = '/'
     JWT_ACCESS_COOKIE_PATH = '/'
-    JWT_REFRESH_COOKIE_PATH = '/' 
+    JWT_REFRESH_COOKIE_PATH = '/refresh' 
     JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', 'localhost')  # Cambia esto a tu dominio en producción
 
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
