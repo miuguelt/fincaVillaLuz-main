@@ -17,8 +17,8 @@ def create_app(config_name='development'):
         exp_utc = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
         now_utc = datetime.now(timezone.utc)
         
-        print(f"=== JWT EXPIRED DEBUG ===", flush=)
-        print(f"Token expired at UTC: {exp_utc.isoformat()}")
+        print(f"=== JWT EXPIRED DEBUG ===", flush=True)
+        print(f"Token expired at UTC: {exp_utc.isoformat()}", flush=True)
         print(f"Current time UTC: {now_utc.isoformat()}", flush=True)
         print(f"Expired {int((now_utc - exp_utc).total_seconds())} seconds ago", flush=True)
         print("========================")
