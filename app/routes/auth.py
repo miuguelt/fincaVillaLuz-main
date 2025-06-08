@@ -14,44 +14,35 @@ def authenticate(identificationDTO, passwordDTO):
 
 @bp.route('/login', methods=['POST'], strict_slashes=False)
 def login():
-    # 1. Get the JSON data from the request and store it in a variable.
-    data = request.get_json()
-
-    # 2. Check if JSON data was sent.
-    if not data:
-        return jsonify({"error": "Request must be JSON"}), 400
-
-    # 3. Get credentials from the stored 'data' variable.
-    identificationDto = data.get('identification', None)
-    passwordDto = data.get('password', None)
+    identificationDto = request.json.get('identification', None)
+    passwordDto = request.json.get('password', None)
 
     if not identificationDto or not passwordDto:
-        return jsonify({"error": "Identificacion y contraseña son requeridos"}), 400
+        return jsonify({"error": "Identificación y contraseña son requeridos"}), 400
 
-    user = authenticate(str(identificationDto), passwordDto) # Ensure identification is a string
-
+    user = authenticate(identificationDto, passwordDto)
     if not user:
-        return jsonify({"error": "Identificacion o contraseña incorecta"}), 401
-    print("fin2", flush=True)
+        return jsonify({"error": "Identificación o contraseña incorrecta"}), 401
 
-    # Create tokens and response
     identity = {
-        "identification": user.identification, 
-        "role": user.role.value, 
-        "fullname": user.fullname, 
-        "email": user.email, 
-        "phone": user.phone, 
+        "identification": user.identification,
+        "role": user.role.value,
+        "fullname": user.fullname,
+        "email": user.email,
+        "phone": user.phone,
         "address": user.address
     }
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
-    print("fin 1", flush=True)
 
-    response = jsonify({"login": True})
-    set_access_cookies(response, access_token)
-    set_refresh_cookies(response, refresh_token)
-    print("fin ", response, response.headers, flush=True)
+    response = jsonify({
+        "login": True,
+        "logged_in_as": identity  # Incluye los datos del usuario
+    })
+    set_access_cookies(response, access_token, domain="finca.isladigital.xyz", path="/", samesite="None", secure=True)
+    set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz", path="/", samesite="None", secure=True)
     return response
+
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
@@ -59,7 +50,7 @@ def refresh():
     new_access_token = create_access_token(identity=current_user_identity)
 
     response = jsonify({
-        'refresh': True,
+        'refresh': True,    
         'logged_in_as': current_user_identity # <-- This is still missing in your provided code
     })
     print("-------fin2-------------------------", response, flush=True)
@@ -69,6 +60,12 @@ def refresh():
 @bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
-    current_user = get_jwt_identity()
-    print("fin2-------------------------", current_user, flush=True)
-    return jsonify(logged_in_as=current_user), 200
+    @bp.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    try:
+        current_user = get_jwt_identity()
+        print("fin2--------protected-------", current_user, flush=True)
+        return jsonify(logged_in_as=current_user), 200
+    except Exception as e:
+        return jsonify(error=f"Unauthorized ------  {e}"), 401

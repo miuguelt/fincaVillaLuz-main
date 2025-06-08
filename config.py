@@ -12,12 +12,14 @@ class Config:
     JWT_COOKIE_CSRF_PROTECT = False  # Puedes activar CSRF token si deseas
     JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
     JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
-    JWT_SECRET_KEY = 'super-secret'  # Cambia esto por una clave segura
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'super-secret')  # Usar variable de entorno
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)  # Ejemplo: 15 minutos
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_COOKIE_SAMESITE = "None"
     JWT_COOKIE_SECURE = True
+    JWT_ACCESS_COOKIE_PATH = '/'
+    JWT_REFRESH_COOKIE_PATH = '/' 
 
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG = False
+    DEBUG = os.getenv('FLASK_ENV') == 'development'

@@ -50,7 +50,7 @@ def create_app():
             "https://finca.isladigital.xyz" # Tu dominio de frontend en producción
         ],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-        allow_headers=["Content-Type", "Authorization"], 
+        allow_headers=["Content-Type", "Authorization", "Accept"], 
         supports_credentials=True 
     )
 
