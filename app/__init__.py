@@ -53,6 +53,6 @@ def create_app():
                     "X-Requested-With", "Origin", "Accept", "Access-Control-Request-Method", "Access-Control-Request-Headers"],
         expose_headers=["Content-Type", "Authorization"], 
         supports_credentials=True
-    )
+    ).init_app(app)
 
     return app
