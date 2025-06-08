@@ -63,9 +63,6 @@ def refresh():
 @bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
-    try:
-        current_user = get_jwt_identity()
-        print("fin2--------protected-------", current_user, flush=True)
-        return jsonify(logged_in_as=current_user), 200
-    except Exception as e:
-        return jsonify(error=f"Unauthorized ------  {e}"), 401
+    current_user = get_jwt_identity()
+    print("fin2--------protected-------", current_user, flush=True)
+    return jsonify(logged_in_as=current_user), 200
