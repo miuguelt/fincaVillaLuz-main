@@ -17,7 +17,7 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
     JWT_COOKIE_SAMESITE = "None"
     JWT_COOKIE_SECURE = True
-    JWT_COOKIE_DOMAIN = "mifinca.isladigital.xyz" 
+    JWT_COOKIE_DOMAIN = "finca.isladigital.xyz" 
     JWT_COOKIE_PATH = '/'
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/refresh' 
