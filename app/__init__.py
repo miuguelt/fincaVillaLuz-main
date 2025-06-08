@@ -1,16 +1,18 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS 
 
-db = SQLAlchemy()
 
+db = SQLAlchemy()
+jwt = JWTManager(a) 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
     
-    jwt = JWTManager(app) 
-
+    
+    jwt.init_app(app)
+    jwt._set_error_handler_callbacks(app)  # Configura los manejadores de errores de JWT
     db.init_app(app)
 
     from app.routes import (
