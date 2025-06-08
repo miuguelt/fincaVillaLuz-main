@@ -62,7 +62,7 @@ def login():
         }
 
         # Crear tokens
-        access_token = create_access_token(identity=identity, expires_delta=timedelta(minutes=15))
+        access_token = create_access_token(identity=identity)
         refresh_token = create_refresh_token(identity=identity)
         print(datetime.now(timezone.utc),flush=True)
         import jwt
@@ -82,6 +82,7 @@ def login():
                                     current_app.config['JWT_ACCESS_TOKEN_EXPIRES']).isoformat()
         })
 
+        response = redirect(url_for('auth.protected'))
         # Configurar cookies
         set_access_cookies(
             response, 
@@ -92,7 +93,7 @@ def login():
             refresh_token
         )
         print("JWT_ACCESS_TOKEN_EXPIRES:", current_app.config.get('JWT_ACCESS_TOKEN_EXPIRES'), flush=True)
-        return redirect(url_for('auth.protected')), 302
+        return response
 
     except Exception as e:
         current_app.logger.error(f"Error en login: {str(e)}")
