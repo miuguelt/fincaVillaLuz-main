@@ -3,13 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS 
 from datetime import timezone, datetime
+from config import config
 
 
 db = SQLAlchemy()
 
-def create_app():
+def create_app(config_name='development'):
     app = Flask(__name__)
-    app.config.from_object('config.Config')
+    app.config.from_object(config[config_name])
     jwt = JWTManager(app) 
     def expired_token_callback(jwt_header, jwt_payload):
         """Solo para mostrar tiempos UTC en errores de JWT"""

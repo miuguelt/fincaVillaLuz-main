@@ -322,3 +322,16 @@ def debug_time():
         'server_timestamp': int(now_utc.timestamp()),
         'timezone': 'UTC'
     })
+
+@bp.route('/debug-config', methods=['GET'])
+def debug_config():
+    from flask import current_app
+    return jsonify({
+        'jwt_secret_key_length': len(current_app.config.get('JWT_SECRET_KEY', '')),
+        'jwt_access_expires': str(current_app.config.get('JWT_ACCESS_TOKEN_EXPIRES')),
+        'jwt_refresh_expires': str(current_app.config.get('JWT_REFRESH_TOKEN_EXPIRES')),
+        'jwt_cookie_domain': current_app.config.get('JWT_COOKIE_DOMAIN'),
+        'jwt_cookie_secure': current_app.config.get('JWT_COOKIE_SECURE'),
+        'jwt_csrf_protect': current_app.config.get('JWT_COOKIE_CSRF_PROTECT'),
+        'jwt_token_location': current_app.config.get('JWT_TOKEN_LOCATION'),
+    })
