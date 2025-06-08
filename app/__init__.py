@@ -5,14 +5,11 @@ from flask_cors import CORS
 
 
 db = SQLAlchemy()
-jwt = JWTManager() 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
-    
-    
-    jwt.init_app(app)
-    jwt._set_error_handler_callbacks(app)  # Configura los manejadores de errores de JWT
+    jwt = JWTManager(app) 
     db.init_app(app)
 
     from app.routes import (
