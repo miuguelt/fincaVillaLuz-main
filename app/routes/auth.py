@@ -62,6 +62,7 @@ def refresh():
 @bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
+    print("-------entra a protected-------", flush=True)
     try:
         current_user = get_jwt_identity()
         print("-------fin2- protected------------------------", current_user, flush=True)
