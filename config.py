@@ -18,7 +18,7 @@ class Config:
     # =====================================
     
     # Clave secreta JWT (CRÍTICO: debe ser la misma siempre)
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_urlsafe(32))
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_urlsafe(32))  # Valor por defecto solo para desarrollo
     
     # Ubicación del token (solo cookies para tu caso)
     JWT_TOKEN_LOCATION = ['cookies']
@@ -39,17 +39,11 @@ class Config:
     
     # Paths específicos para cada tipo de token
     JWT_ACCESS_COOKIE_PATH = '/'
-    JWT_REFRESH_COOKIE_PATH = '/'  # Cambiado de '/refresh' a '/' para mayor flexibilidad
+    JWT_REFRESH_COOKIE_PATH = '/refresh'  # Cambiado de '/refresh' a '/' para mayor flexibilidad
     
     # CSRF Protection (DESHABILITADO para simplificar debugging)
     JWT_COOKIE_CSRF_PROTECT = False  # Cambiado a False temporalmente
     JWT_CSRF_IN_COOKIES = False
-    
-    # Si decides habilitar CSRF más adelante:
-    # JWT_COOKIE_CSRF_PROTECT = True
-    # JWT_CSRF_IN_COOKIES = True
-    # JWT_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']
-    # JWT_CSRF_COOKIE_NAME = 'csrf_token_cookie'
     
     # Refresh token habilitado
     JWT_REFRESH_TOKEN_ENABLED = True
@@ -68,15 +62,13 @@ class ProductionConfig(Config):
     DEBUG = False
     JWT_COOKIE_SECURE = True
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
-    
+
     # Validar JWT_SECRET_KEY antes de asignarlo
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_urlsafe(32))
-    print(f"JWT_SECRET_KEY generado: {JWT_SECRET_KEY}", flush=True)
-    if not JWT_SECRET_KEY:
+    jwt_secret = os.getenv('JWT_SECRET_KEY')
+    if not jwt_secret:
         raise ValueError("JWT_SECRET_KEY debe estar definida en producción")
     
-    print(f"JWT_SECRET_KEY--------------- generado: {JWT_SECRET_KEY}", flush=True)
-
+    JWT_SECRET_KEY = jwt_secret  # Asignar después de validar
 
 # Configuración por defecto
 config = {
