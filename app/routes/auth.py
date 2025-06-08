@@ -15,6 +15,12 @@ import os
 
 bp = Blueprint('auth', __name__)
 
+@bp.route('/me', methods=['GET'])
+@jwt_required()
+def me():
+    """Retorna los datos del usuario autenticado a partir del token"""
+    current_user = get_jwt_identity()
+    return jsonify({"user": current_user}), 200
 def authenticate(identification, password):
     """Función mejorada de autenticación con manejo de errores"""
     try:

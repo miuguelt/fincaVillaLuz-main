@@ -33,7 +33,7 @@ class Config:
     JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'True').lower() == 'true'
     JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', ".isladigital.xyz")  # Debe estar definida en producción
     JWT_COOKIE_PATH = '/'
-    JWT_COOKIE_SAMESITE = 'None'  # Permitir cross-site cookies con Secure
+    JWT_COOKIE_SAMESITE = 'Lax'  # Permitir cross-site cookies con Secure
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/'
     JWT_COOKIE_CSRF_PROTECT = False
@@ -63,7 +63,7 @@ class ProductionConfig(Config):
         # Forzar configuración segura
         cls.JWT_COOKIE_SECURE = True
         cls.JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
-        cls.JWT_COOKIE_SAMESITE = 'None'
+        cls.JWT_COOKIE_SAMESITE = 'Lax'
         cls.JWT_COOKIE_DOMAIN = cls.JWT_COOKIE_DOMAIN.rstrip('.')  # Eliminar punto si existe
         print("✅ secrey key:", cls.JWT_SECRET_KEY, flush=True)
         print("✅ cookie domain:", cls.JWT_COOKIE_DOMAIN, flush=True)
