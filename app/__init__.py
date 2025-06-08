@@ -47,11 +47,14 @@ def create_app():
         origins=[
             "http://localhost:5173",    # Frontend local (HTTP) - Temporal, ver Paso 2
             "https://localhost:5173",   # Frontend local (HTTPS) - PREFERIDO
-            "https://finca.isladigital.xyz" # Tu dominio de frontend en producción
+            "https://mifinca.isladigital.xyz" # Tu dominio de frontend en producción
         ],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-        allow_headers=["Content-Type", "Authorization", "Accept"], 
-        supports_credentials=True 
+        allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
+        expose_headers=["Content-Type", "Authorization"], 
+        supports_credentials=True,
+        resources={r"/*": {"origins": "*"}}  # Permite todos los recursos
+        
     )
 
     return app
