@@ -82,7 +82,7 @@ def login():
             response, 
             refresh_token
         )
-
+        protected()
         return response
 
     except Exception as e:
