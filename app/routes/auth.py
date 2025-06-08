@@ -65,7 +65,6 @@ def login():
         access_token = create_access_token(identity=identity, expires_delta=timedelta(minutes=15))
         refresh_token = create_refresh_token(identity=identity)
         print(datetime.now(timezone.utc),flush=True)
-        from datetime import datetime
         import jwt
 
         decoded = jwt.decode(access_token, options={"verify_signature": False})
