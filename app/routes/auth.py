@@ -11,6 +11,7 @@ from flask_jwt_extended import (
 )
 from datetime import datetime, timezone, timedelta
 from app.models import User
+import os
 
 bp = Blueprint('auth', __name__)
 
@@ -305,4 +306,13 @@ def debug_config():
         'jwt_cookie_secure': current_app.config.get('JWT_COOKIE_SECURE'),
         'jwt_csrf_protect': current_app.config.get('JWT_COOKIE_CSRF_PROTECT'),
         'jwt_token_location': current_app.config.get('JWT_TOKEN_LOCATION'),
+    })
+
+@bp.route("/debug-jwt-config", methods=["GET"])
+def debug_jwt_config():
+    return jsonify({
+        "JWT_COOKIE_SECURE": current_app.config.get("JWT_COOKIE_SECURE"),
+        "JWT_COOKIE_DOMAIN": current_app.config.get("JWT_COOKIE_DOMAIN"),
+        "JWT_ACCESS_COOKIE_PATH": current_app.config.get("JWT_ACCESS_COOKIE_PATH"),
+        "ENV": os.getenv('FLASK_ENV'),
     })
