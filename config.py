@@ -3,7 +3,16 @@ from datetime import timedelta
 import secrets
 
 class Config:
-    # ... [Configuración de Base de Datos] ...
+    
+    USER = os.getenv('DB_USER')
+    PASSWORD = os.getenv('DB_PASSWORD')
+    HOST = os.getenv('DB_HOST')
+    PORT = os.getenv('DB_PORT')
+    DATABASE = os.getenv('DB_NAME')
+
+    SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    DEBUG = os.getenv('FLASK_ENV') == 'True'
 
     # JWT Configuration
     _jwt_secret_from_env = os.getenv('JWT_SECRET_KEY')
