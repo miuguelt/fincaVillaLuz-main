@@ -49,7 +49,7 @@ class Config:
     
     # JWT_COOKIE_DOMAIN: Debe ser el dominio de tu aplicación (ej. finca.isladigital.xyz)
     # En desarrollo, puede ser 'localhost' o None.
-    JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN') 
+    JWT_COOKIE_DOMAIN = "finca.isladigital.xyz"
     if not JWT_COOKIE_DOMAIN and DEBUG: # Si no está definida en desarrollo, usa localhost
         print("ADVERTENCIA: JWT_COOKIE_DOMAIN no definida en desarrollo. Usando 'localhost'.", flush=True)
         JWT_COOKIE_DOMAIN = 'localhost'
@@ -89,7 +89,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     """Configuración específica para producción"""
     DEBUG = False # Asegura que el modo depuración está desactivado
-
+    JWT_COOKIE_DOMAIN="finca.isladigital.xyz"
     # --- ¡CRÍTICO EN PRODUCCIÓN! ---
     # Forzar que JWT_SECRET_KEY SIEMPRE venga del entorno.
     # Si no está definida, la aplicación NO debe iniciar.
