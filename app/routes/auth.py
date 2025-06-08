@@ -62,8 +62,17 @@ def login():
         }
 
         # Crear tokens
-        access_token = create_access_token(identity=identity)
+        access_token = create_access_token(identity=identity, expires_delta=timedelta(minutes=15))
         refresh_token = create_refresh_token(identity=identity)
+        print(datetime.now(timezone.utc),flush=True)
+        import jwt
+        decoded = jwt.decode(access_token, options={"verify_signature": False})
+        iat = datetime.fromtimestamp(decoded['iat'])
+        exp = datetime.fromtimestamp(decoded['exp'])
+
+        print(f"Issued at: {iat}", flush=True)
+        print(f"Expires at: {exp}", flush=True)
+        print(f"Now: {datetime.utcnow()}", flush=True)
 
         # Configurar respuesta
         response = jsonify({
@@ -82,7 +91,7 @@ def login():
             response, 
             refresh_token
         )
-        
+        print("JWT_ACCESS_TOKEN_EXPIRES:", current_app.config.get('JWT_ACCESS_TOKEN_EXPIRES'), flush=True)
         return redirect(url_for('auth.protected')), 302
 
     except Exception as e:
