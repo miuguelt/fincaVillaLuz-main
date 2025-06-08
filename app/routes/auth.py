@@ -39,8 +39,15 @@ def login():
         "login": True,
         "logged_in_as": identity  # Incluye los datos del usuario
     })
-    set_access_cookies(response, access_token)
-    set_refresh_cookies(response, refresh_token)
+    set_access_cookies(response, access_token, 
+                      secure=True, 
+                      httponly=True, 
+                      samesite='None')
+                      
+    set_refresh_cookies(response, refresh_token, 
+                       secure=True, 
+                       httponly=True, 
+                       samesite='None')
 
     print("-------login-------------------------", response, flush=True)
     return response
