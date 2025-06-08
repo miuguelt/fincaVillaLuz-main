@@ -40,9 +40,9 @@ def login():
         "logged_in_as": identity  # Incluye los datos del usuario
     })
 
-    response = jsonify({"login": True, "logged_in_as": identity})
-    set_access_cookies(response, access_token, domain="mifinca.isladigital.xyz")
-    set_refresh_cookies(response, refresh_token, domain="mifinca.isladigital.xyz")
+    response = jsonify({"login": True, "logged_in_as": identity}) 
+    set_access_cookies(response, access_token) 
+    set_refresh_cookies(response, refresh_token)
     print("inicio de sesion", flush=True)
     return response
 
