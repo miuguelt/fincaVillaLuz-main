@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 
 db = SQLAlchemy()
-jwt = JWTManager(a) 
+jwt = JWTManager() 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
