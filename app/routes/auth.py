@@ -82,7 +82,6 @@ def login():
                                     current_app.config['JWT_ACCESS_TOKEN_EXPIRES']).isoformat()
         })
 
-        response = redirect(url_for('auth.protected'))
         # Configurar cookies
         set_access_cookies(
             response, 
@@ -93,7 +92,7 @@ def login():
             refresh_token
         )
         print("JWT_ACCESS_TOKEN_EXPIRES:", current_app.config.get('JWT_ACCESS_TOKEN_EXPIRES'), flush=True)
-        return response
+        return response, redirect(url_for('auth.protected'))
 
     except Exception as e:
         current_app.logger.error(f"Error en login: {str(e)}")
