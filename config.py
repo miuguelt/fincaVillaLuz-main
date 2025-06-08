@@ -26,7 +26,7 @@ class Config:
     JWT_TOKEN_LOCATION = ['cookies']
     JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
     JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
-    JWT_ACCESS_TOKEN_EXPIRES = 100000
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=1500)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
     # Configuración crítica para producción
