@@ -70,7 +70,8 @@ class ProductionConfig(Config):
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     
     # Validar JWT_SECRET_KEY antes de asignarlo
-    jwt_secret = os.getenv(secrets.token_urlsafe(32))
+    jwt_secret = secrets.token_urlsafe(32)
+    print(f"JWT_SECRET_KEY generado: {jwt_secret}", flush=True)
     if not jwt_secret:
         raise ValueError("JWT_SECRET_KEY debe estar definida en producción")
     
