@@ -21,6 +21,13 @@ def me():
     """Retorna los datos del usuario autenticado a partir del token"""
     current_user = get_jwt_identity()
     return jsonify({"user": current_user}), 200
+
+@bp.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
 def authenticate(identification, password):
     """Función mejorada de autenticación con manejo de errores"""
     try:
@@ -221,39 +228,6 @@ def debug_token_detailed():
     print("=== FIN DEBUG ===", flush=True)
     return jsonify(result)
 
-# También modifica tu endpoint protected para más debugging:
-@bp.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    print("=== PROTECTED ENDPOINT ===", flush=True)
-    
-    try:
-        # Debug detallado
-        from flask import request
-        print(f"Headers: {dict(request.headers)}", flush=True)
-        print(f"Cookies: {dict(request.cookies)}", flush=True)
-        
-        current_user = get_jwt_identity()
-        current_jwt = get_jwt()
-        
-        print(f"Usuario: {current_user}", flush=True)
-        print(f"JWT Claims: {current_jwt}", flush=True)
-        
-        return jsonify(
-            logged_in_as=current_user,
-            jwt_claims=current_jwt,
-            message="Protected endpoint accessed successfully"
-        ), 200
-        
-    except Exception as e:
-        print(f"ERROR en protected: {str(e)}", flush=True)
-        print(f"Tipo de error: {type(e).__name__}", flush=True)
-        
-        # Más información del error
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}", flush=True)
-        
-        return jsonify(error=str(e), error_type=type(e).__name__), 401
 @bp.route('/debug-jwt-config1', methods=['GET'])
 def debug_jwt_config1():
     from flask import current_app
