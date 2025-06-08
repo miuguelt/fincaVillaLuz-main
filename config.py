@@ -14,7 +14,8 @@ class Config:
     JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'super-secret')  # Usar variable de entorno
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)  # Ejemplo: 15 minutos
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7) 
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
+    JWT_COOKIE_SAMESITE = "None" 
     JWT_COOKIE_SECURE = True
     JWT_COOKIE_PATH = '/'
     JWT_ACCESS_COOKIE_PATH = '/'
