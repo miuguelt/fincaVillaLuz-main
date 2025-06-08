@@ -120,26 +120,7 @@ def logout():
     """Endpoint para logout que limpia las cookies"""
     response = jsonify({"logout": True})
     unset_jwt_cookies(response)
-    return response
-
-@bp.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    """Endpoint protegido con verificación JWT"""
-    try:
-        current_user = get_jwt_identity()
-        jwt_data = get_jwt()
-        
-        return jsonify({
-            "user": current_user,
-            "token_data": {
-                "expires": datetime.fromtimestamp(jwt_data['exp']).isoformat(),
-                "issued_at": datetime.fromtimestamp(jwt_data['iat']).isoformat()
-            }
-        })
-    except Exception as e:
-        current_app.logger.error(f"Error en endpoint protegido: {str(e)}")
-        return jsonify({"error": "Acceso no autorizado"}), 401
+    return response    
 
 @bp.route('/debug-token-detailed', methods=['GET'])
 def debug_token_detailed():
