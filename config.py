@@ -20,6 +20,7 @@ class Config:
     JWT_COOKIE_PATH = '/'
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/' 
+    JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', 'localhost')  # Cambia esto a tu dominio en producción
 
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
