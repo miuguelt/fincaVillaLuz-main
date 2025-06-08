@@ -30,7 +30,7 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
     # Configuración crítica para producción
-    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'True').lower() == 'true'
+    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'False').lower() == 'False'
     JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', ".isladigital.xyz")  # Debe estar definida en producción
     JWT_COOKIE_PATH = '/'
     JWT_COOKIE_SAMESITE = 'Lax'  # Permitir cross-site cookies con Secure
@@ -55,7 +55,7 @@ class ProductionConfig(Config):
         raise ValueError("JWT_SECRET_KEY environment variable MUST be set in production for security.")
     JWT_SECRET_KEY = _production_jwt_secret # Asignar la clave validada
 
-    JWT_COOKIE_SECURE = True # Siempre True en producción (HTTPS)
+    JWT_COOKIE_SECURE = False # Siempre True en producción (HTTPS)
 
     _production_jwt_cookie_domain = os.getenv('JWT_COOKIE_DOMAIN')
     if not _production_jwt_cookie_domain:
