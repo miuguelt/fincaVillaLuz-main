@@ -50,7 +50,7 @@ def login():
 def refresh():
     current_user_identity = get_jwt_identity() 
     new_access_token = create_access_token(identity=current_user_identity)
-
+    print("-------fin refichs-------------------------", current_user_identity, flush=True)
     response = jsonify({
         'refresh': True,    
         'logged_in_as': current_user_identity # <-- This is still missing in your provided code
