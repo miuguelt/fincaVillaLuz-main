@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies, set_access_cookies
-
+from datetime import timezone, datetime, timedelta
 from app.models import User
 
 bp = Blueprint('auth',__name__)
@@ -23,6 +23,10 @@ def login():
     user = authenticate(identificationDto, passwordDto)
     if not user:
         return jsonify({"error": "Identificación o contraseña incorrecta"}), 401
+    
+        # SOLO CAMBIAR ESTAS LÍNEAS:
+    now_utc = datetime.now(timezone.utc)  # NUEVA LÍNEA
+    
 
     identity = {
         "identification": user.identification,
@@ -30,8 +34,10 @@ def login():
         "fullname": user.fullname,
         "email": user.email,
         "phone": user.phone,
-        "address": user.address
+        "address": user.address,
+        "login_time_utc": now_utc.isoformat()
     }
+
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
     print("Token generado:", access_token, flush=True)
@@ -40,10 +46,16 @@ def login():
         "logged_in_as": identity  # Incluye los datos del usuario
     })
 
-    response = jsonify({"login": True, "logged_in_as": identity}) 
     set_access_cookies(response, access_token, domain="finca.isladigital.xyz") 
     set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz")
     print("inicio de sesion", flush=True)
+        # LOG MÍNIMO PARA DEBUG
+    expires_at_utc = now_utc + timedelta(hours=1)  # Ajusta según tu config
+    print(f"=== LOGIN DEBUG ===")
+    print(f"Login UTC: {now_utc.isoformat()}")
+    print(f"Expires UTC: {expires_at_utc.isoformat()}")
+    print(f"User: {identity.get('identification', 'unknown')}")
+    print("=================")
     return response
 
 @bp.route('/refresh', methods=['POST'])
@@ -235,4 +247,13 @@ def debug_cookies():
         'cookies_received': list(cookies.keys()),
         'access_token_present': 'access_token_cookie' in cookies,
         'refresh_token_present': 'refresh_token_cookie' in cookies
+    })
+
+@bp.route('/debug-time', methods=['GET'])
+def debug_time():
+    now_utc = datetime.now(timezone.utc)
+    return jsonify({
+        'server_utc': now_utc.isoformat(),
+        'server_timestamp': int(now_utc.timestamp()),
+        'timezone': 'UTC'
     })
