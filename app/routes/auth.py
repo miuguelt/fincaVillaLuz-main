@@ -92,7 +92,7 @@ def login():
             refresh_token
         )
         print("JWT_ACCESS_TOKEN_EXPIRES:", current_app.config.get('JWT_ACCESS_TOKEN_EXPIRES'), flush=True)
-        return response, redirect(url_for('auth.protected'))
+        return response
 
     except Exception as e:
         current_app.logger.error(f"Error en login: {str(e)}")
