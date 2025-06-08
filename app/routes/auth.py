@@ -68,9 +68,8 @@ def login():
         import jwt
 
         decoded = jwt.decode(access_token, options={"verify_signature": False})
-        iat = datetime.fromtimestamp(decoded['iat'])
-        exp = datetime.fromtimestamp(decoded['exp'])
-
+        iat = datetime.fromtimestamp(decoded['iat'], timezone.utc)
+        exp = datetime.fromtimestamp(decoded['exp'], timezone.utc)
         print(f"Issued at: {iat}", flush=True)
         print(f"Expires at: {exp}", flush=True)
         print(f"Now: {datetime.now(timezone.utc)}", flush=True)
