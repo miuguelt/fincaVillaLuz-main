@@ -69,17 +69,11 @@ def login():
         # Configurar cookies
         set_access_cookies(
             response, 
-            access_token,
-            domain=current_app.config.get('JWT_COOKIE_DOMAIN'),
-            httponly=True,
-            samesite='Lax'
+            access_token
         )
         set_refresh_cookies(
             response, 
-            refresh_token,
-            domain=current_app.config.get('JWT_COOKIE_DOMAIN'),
-            httponly=True,
-            samesite='Lax'
+            refresh_token
         )
 
         return response
@@ -103,8 +97,7 @@ def refresh():
         
         set_access_cookies(
             response, 
-            new_token,
-            domain=current_app.config.get('JWT_COOKIE_DOMAIN')
+            new_token
         )
         
         return response
