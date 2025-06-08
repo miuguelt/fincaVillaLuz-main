@@ -61,14 +61,78 @@ def refresh():
     print("refresh token generado:", new_access_token, flush=True)
     return response
 
+# En tu backend Flask, agrega estos debugs:
+
 @bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
     print("-------entra a protected-------", flush=True)
+    
+    # Debug: verificar el token crudo
+    from flask import request
+    print("Cookies recibidas:", request.cookies, flush=True)
+    
+    # Debug: verificar el token JWT
+    try:
+        from flask_jwt_extended import get_jwt
+        current_token = get_jwt()
+        print("Token JWT decodificado:", current_token, flush=True)
+    except Exception as token_error:
+        print("Error al decodificar token:", token_error, flush=True)
+    
     try:
         current_user = get_jwt_identity()
-        print("-------fin2- protected------------------------", current_user, flush=True)
+        print("Usuario actual:", current_user, flush=True)
         return jsonify(logged_in_as=current_user), 200
     except Exception as e:
-        print("-------fin2 error-------------------------", e, flush=True)
+        print("Error en protected:", str(e), flush=True)
+        print("Tipo de error:", type(e).__name__, flush=True)
         return jsonify(error=str(e)), 401
+
+# También verifica tu configuración JWT:
+@bp.route('/debug-jwt-config', methods=['GET'])
+def debug_jwt_config():
+    from flask import current_app
+    return jsonify({
+        'jwt_secret_key_set': bool(current_app.config.get('JWT_SECRET_KEY')),
+        'jwt_token_location': current_app.config.get('JWT_TOKEN_LOCATION'),
+        'jwt_cookie_secure': current_app.config.get('JWT_COOKIE_SECURE'),
+        'jwt_cookie_csrf_protect': current_app.config.get('JWT_COOKIE_CSRF_PROTECT'),
+        'jwt_access_cookie_name': current_app.config.get('JWT_ACCESS_COOKIE_NAME'),
+        'jwt_refresh_cookie_name': current_app.config.get('JWT_REFRESH_COOKIE_NAME'),
+    })
+
+# Y un endpoint para verificar si las cookies se están enviando correctamente:
+@bp.route('/debug-cookies', methods=['GET'])
+def debug_cookies():
+    from flask import request
+    cookies = dict(request.cookies)
+    print("Todas las cookies:", cookies, flush=True)
+    
+    # Intentar decodificar el access token manualmente
+    access_cookie = cookies.get('access_token_cookie')
+    if access_cookie:
+        try:
+            import jwt
+            from flask import current_app
+            # Decodificar sin verificar (solo para debug)
+            decoded = jwt.decode(access_cookie, options={"verify_signature": False})
+            print("Token decodificado (sin verificar):", decoded, flush=True)
+            
+            # Ahora intentar verificar la firma
+            try:
+                verified = jwt.decode(access_cookie, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+                print("Token verificado exitosamente:", verified, flush=True)
+            except jwt.InvalidSignatureError:
+                print("ERROR: Firma del token inválida", flush=True)
+            except Exception as verify_error:
+                print("ERROR en verificación:", verify_error, flush=True)
+            
+        except Exception as decode_error:
+            print("ERROR al decodificar token:", decode_error, flush=True)
+    
+    return jsonify({
+        'cookies_received': list(cookies.keys()),
+        'access_token_present': 'access_token_cookie' in cookies,
+        'refresh_token_present': 'refresh_token_cookie' in cookies
+    })
