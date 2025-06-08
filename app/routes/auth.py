@@ -39,8 +39,8 @@ def login():
         "login": True,
         "logged_in_as": identity  # Incluye los datos del usuario
     })
-    set_access_cookies(response, access_token, domain="finca.isladigital.xyz", path="/", samesite="None", secure=True)
-    set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz", path="/", samesite="None", secure=True)
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
     return response
 
 @bp.route('/refresh', methods=['POST'])

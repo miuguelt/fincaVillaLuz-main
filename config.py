@@ -17,6 +17,7 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_COOKIE_SAMESITE = "None"
     JWT_COOKIE_SECURE = True
+    JWT_COOKIE_PATH = '/'
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/' 
 
