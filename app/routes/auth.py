@@ -34,7 +34,7 @@ def login():
     }
     access_token = create_access_token(identity=identity)
     refresh_token = create_refresh_token(identity=identity)
-
+    print("Token generado:", access_token, flush=True)
     response = jsonify({
         "login": True,
         "logged_in_as": identity  # Incluye los datos del usuario
