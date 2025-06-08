@@ -1,80 +1,145 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_refresh_cookies, set_access_cookies
-from datetime import timezone, datetime, timedelta
+from flask import Blueprint, request, jsonify, current_app
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt_identity,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
+    get_jwt
+)
+from datetime import datetime, timezone, timedelta
 from app.models import User
 
-bp = Blueprint('auth',__name__)
-def authenticate(identificationDTO, passwordDTO):
-    # This logic should be optimized for production (e.g., query the database directly)
-    # For now, it is functionally correct for the example.
-    user_data = User.query.filter_by(identification=identificationDTO).first()
-    if user_data and user_data.password == passwordDTO: # In a real app, use a password hashing library like Werkzeug or passlib
-        return user_data
-    return None
+bp = Blueprint('auth', __name__)
 
-@bp.route('/login', methods=['POST'], strict_slashes=False)
+def authenticate(identification, password):
+    """Función mejorada de autenticación con manejo de errores"""
+    try:
+        user = User.query.filter_by(identification=identification).first()
+        if user and user.password == password:  # En producción usa bcrypt/werkzeug
+            return user
+        return None
+    except Exception as e:
+        current_app.logger.error(f"Error en autenticación: {str(e)}")
+        return None
+
+@bp.route('/login', methods=['POST'])
 def login():
-    identificationDto = request.json.get('identification', None)
-    passwordDto = request.json.get('password', None)
-    print("-------login-------------------------", identificationDto, passwordDto, flush=True)
-    if not identificationDto or not passwordDto:
-        return jsonify({"error": "Identificación y contraseña son requeridos"}), 400
+    """Endpoint de login con manejo robusto de cookies"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Datos JSON requeridos"}), 400
 
-    user = authenticate(identificationDto, passwordDto)
-    if not user:
-        return jsonify({"error": "Identificación o contraseña incorrecta"}), 401
-    
-        # SOLO CAMBIAR ESTAS LÍNEAS:
-    now_utc = datetime.now(timezone.utc)  # NUEVA LÍNEA
-    
+        identification = data.get('identification')
+        password = data.get('password')
+        
+        if not identification or not password:
+            return jsonify({"error": "Identificación y contraseña son requeridos"}), 400
 
-    identity = {
-        "identification": user.identification,
-        "role": user.role.value,
-        "fullname": user.fullname,
-        "email": user.email,
-        "phone": user.phone,
-        "address": user.address,
-        "login_time_utc": now_utc.isoformat()
-    }
+        user = authenticate(identification, password)
+        if not user:
+            return jsonify({"error": "Credenciales inválidas"}), 401
 
-    access_token = create_access_token(identity=identity)
-    refresh_token = create_refresh_token(identity=identity)
-    print("Token generado:", access_token, flush=True)
-    response = jsonify({
-        "login": True,
-        "logged_in_as": identity  # Incluye los datos del usuario
-    })
+        # Crear identidad del usuario
+        identity = {
+            "identification": user.identification,
+            "role": user.role.value,
+            "fullname": user.fullname,
+            "email": user.email,
+            "phone": user.phone,
+            "address": user.address,
+            "login_time_utc": datetime.now(timezone.utc).isoformat()
+        }
 
-    set_access_cookies(response, access_token, domain="finca.isladigital.xyz") 
-    set_refresh_cookies(response, refresh_token, domain="finca.isladigital.xyz")
-    print("inicio de sesion", flush=True)
-        # LOG MÍNIMO PARA DEBUG
-    expires_at_utc = now_utc + timedelta(hours=1)  # Ajusta según tu config
-    print(f"=== LOGIN DEBUG ===")
-    print(f"Login UTC: {now_utc.isoformat()}")
-    print(f"Expires UTC: {expires_at_utc.isoformat()}")
-    print(f"User: {identity.get('identification', 'unknown')}")
-    print("=================")
-    return response
+        # Crear tokens
+        access_token = create_access_token(identity=identity)
+        refresh_token = create_refresh_token(identity=identity)
+
+        # Configurar respuesta
+        response = jsonify({
+            "login": True,
+            "user": identity,
+            "access_token_expires": (datetime.now(timezone.utc) + 
+                                    current_app.config['JWT_ACCESS_TOKEN_EXPIRES']).isoformat()
+        })
+
+        # Configurar cookies
+        set_access_cookies(
+            response, 
+            access_token,
+            domain=current_app.config.get('JWT_COOKIE_DOMAIN'),
+            secure=current_app.config.get('JWT_COOKIE_SECURE', True),
+            httponly=True,
+            samesite='Lax'
+        )
+        set_refresh_cookies(
+            response, 
+            refresh_token,
+            domain=current_app.config.get('JWT_COOKIE_DOMAIN'),
+            secure=current_app.config.get('JWT_COOKIE_SECURE', True),
+            httponly=True,
+            samesite='Lax'
+        )
+
+        return response
+
+    except Exception as e:
+        current_app.logger.error(f"Error en login: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
 
 @bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    current_user_identity = get_jwt_identity() 
-    new_access_token = create_access_token(identity=current_user_identity)
-    print("-------fin refichs-------------------------", current_user_identity, flush=True)
-    response = jsonify({
-        'refresh': True,    
-        'logged_in_as': current_user_identity # <-- This is still missing in your provided code
-    })
-    set_access_cookies(response, new_access_token, domain="finca.isladigital.xyz")
-    print("-------fin2-------------------------", response, flush=True)
-    print("refresh token generado:", new_access_token, flush=True)
+    """Endpoint para refrescar el token de acceso"""
+    try:
+        current_user = get_jwt_identity()
+        new_token = create_access_token(identity=current_user)
+        
+        response = jsonify({
+            'refresh': True,
+            'user': current_user
+        })
+        
+        set_access_cookies(
+            response, 
+            new_token,
+            domain=current_app.config.get('JWT_COOKIE_DOMAIN'),
+            secure=current_app.config.get('JWT_COOKIE_SECURE', True)
+        )
+        
+        return response
+    except Exception as e:
+        current_app.logger.error(f"Error en refresh: {str(e)}")
+        return jsonify({"error": "No se pudo refrescar el token"}), 401
+
+@bp.route('/logout', methods=['POST'])
+def logout():
+    """Endpoint para logout que limpia las cookies"""
+    response = jsonify({"logout": True})
+    unset_jwt_cookies(response)
     return response
 
-# En tu backend Flask, agrega estos debugs:
-# Agrega este endpoint a tu Flask backend para debugging detallado
+@bp.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    """Endpoint protegido con verificación JWT"""
+    try:
+        current_user = get_jwt_identity()
+        jwt_data = get_jwt()
+        
+        return jsonify({
+            "user": current_user,
+            "token_data": {
+                "expires": datetime.fromtimestamp(jwt_data['exp']).isoformat(),
+                "issued_at": datetime.fromtimestamp(jwt_data['iat']).isoformat()
+            }
+        })
+    except Exception as e:
+        current_app.logger.error(f"Error en endpoint protegido: {str(e)}")
+        return jsonify({"error": "Acceso no autorizado"}), 401
 
 @bp.route('/debug-token-detailed', methods=['GET'])
 def debug_token_detailed():
