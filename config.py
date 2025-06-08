@@ -15,10 +15,10 @@ class Config:
     DEBUG = os.getenv('FLASK_ENV') == 'True'
 
     # JWT Configuration
-    _jwt_secret_from_env = os.getenv('JWT_SECRET_KEY')
+    _jwt_secret_from_env = os.getenv('JWT_SECRET_KEY', 'Tq8L0Rd9sXkZ2YpQ5mF7wN1vK3rL8jPb')
     if not _jwt_secret_from_env:
         print("ADVERTENCIA: JWT_SECRET_KEY no definida. Usando temporal (SOLO DESARROLLO).", flush=True)
-        JWT_SECRET_KEY = secrets.token_urlsafe(32)
+        JWT_SECRET_KEY = "Tq8L0Rd9sXkZ2YpQ5mF7wN1vK3rL8jPb"
     else:
         JWT_SECRET_KEY = _jwt_secret_from_env
 
@@ -64,7 +64,12 @@ class ProductionConfig(Config):
         cls.JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
         cls.JWT_COOKIE_SAMESITE = 'None'
         cls.JWT_COOKIE_DOMAIN = cls.JWT_COOKIE_DOMAIN.rstrip('.')  # Eliminar punto si existe
-
+        print("✅ secrey key:", cls.JWT_SECRET_KEY, flush=True)
+        print("✅ cookie domain:", cls.JWT_COOKIE_DOMAIN, flush=True)
+        print("✅ cookie secure:", cls.JWT_COOKIE_SECURE, flush=True)
+        print("✅ access token expires:", cls.JWT_ACCESS_TOKEN_EXPIRES, flush=True)
+        print("✅ refresh token enabled:", cls.JWT_REFRESH_TOKEN_ENABLED, flush=True)
+        
         print("✅ ProductionConfig inicializada correctamente.", flush=True)
 
 config = {
