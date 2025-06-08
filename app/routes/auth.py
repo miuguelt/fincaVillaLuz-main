@@ -59,3 +59,12 @@ def refresh():
     print("-------fin2-------------------------", response, flush=True)
     set_access_cookies(response, new_access_token)
     return response
+
+@bp.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    try:
+        current_user = get_jwt_identity()
+        return jsonify(logged_in_as=current_user), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 401
