@@ -2,7 +2,7 @@ from app import db
 import enum
 
 class HealtStatus(enum.Enum):
-    Exelente = "Exelente"
+    Excelente = "Excelente"
     Bueno = "Bueno"
     Regular = "Regular"
     Malo = "Malo"
