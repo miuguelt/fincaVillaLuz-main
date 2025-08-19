@@ -11,7 +11,6 @@ def get_animals():
     animals = Animals.query.all()
     return jsonify([animal.to_json() for animal in animals])
 
-
 @bp.route('/<int:id>', methods=['GET'], strict_slashes=False)
 def get_animal(id):
     animals = Animals.query.get_or_404(id)
@@ -30,7 +29,6 @@ def get_animal_status():
     # Devolver el JSON como respuesta
     return jsonify(status_data)
 
-
 @bp.route('/', methods=['POST'])
 def create_animals():
     data = request.get_json()
@@ -42,7 +40,7 @@ def create_animals():
     except IntegrityError as e:
         db.session.rollback()
         return jsonify({"error": str(e.orig)}), 400
-
+    
 @bp.route('/<int:id>', methods=['PUT'])
 def update_animals(id):
     animals = Animals.query.get_or_404(id)
