@@ -1,9 +1,10 @@
 import os
 from datetime import timedelta
-import secrets
+import secrets # Buena práctica para generar secretos si no existen
 
 class Config:
     
+    # --- Configuración de Base de Datos (Esto se ve bien) ---
     USER = os.getenv('DB_USER')
     PASSWORD = os.getenv('DB_PASSWORD')
     HOST = os.getenv('DB_HOST')
@@ -12,62 +13,69 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG = os.getenv('FLASK_ENV') == 'True'
-    JWT_COOKIE_HTTPONLY = True
+    
+    # MEJORA: FLASK_ENV suele ser 'development' o 'production', no 'True'.
+    # Es más seguro comparar con 'development'.
+    DEBUG = os.getenv('FLASK_ENV') == 'development'
 
-    # JWT Configuration
-    _jwt_secret_from_env = os.getenv('JWT_SECRET_KEY', 'Tq8L0Rd9sXkZ2YpQ5mF7wN1vK3rL8jPb')
-    if not _jwt_secret_from_env:
-        print("ADVERTENCIA: JWT_SECRET_KEY no definida. Usando temporal (SOLO DESARROLLO).", flush=True)
-        JWT_SECRET_KEY = "Tq8L0Rd9sXkZ2YpQ5mF7wN1vK3rL8jPb"
-    else:
-        JWT_SECRET_KEY = _jwt_secret_from_env
-
+    # --- Configuración de JWT (Aquí están los cambios importantes) ---
+    
+    # MEJORA: Genera una clave segura si no está en las variables de entorno para desarrollo.
+    # Evita tener una clave fija quemada en el código.
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', secrets.token_hex(16))
+    
     JWT_TOKEN_LOCATION = ['cookies']
+    JWT_COOKIE_HTTPONLY = True # ¡Excelente! Buena práctica de seguridad.
     JWT_ACCESS_COOKIE_NAME = 'access_token_cookie'
     JWT_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=1500)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=1500) # Esto se sobrescribe en prod/dev
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
-
-    # Configuración crítica para producción
-    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'True').lower() == 'True'
-    JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN', "isladigital.xyz")  # Debe estar definida en producción
-    JWT_COOKIE_PATH = '/'
-    JWT_COOKIE_SAMESITE = 'Lax'  # Permitir cross-site cookies con Secure
+    
+    # --- Configuración de Cookies (CAMBIO CRÍTICO AQUÍ) ---
+    JWT_COOKIE_SECURE = os.getenv('JWT_COOKIE_SECURE', 'True').lower() == 'true'
+    
+    # CORRECCIÓN PRINCIPAL: Debe ser 'None' para permitir cookies cross-site (React <-> Flask)
+    JWT_COOKIE_SAMESITE = 'None' 
+    
+    JWT_COOKIE_DOMAIN = os.getenv('JWT_COOKIE_DOMAIN') # Es mejor no tener un default aquí y forzarlo en Prod/Dev.
     JWT_ACCESS_COOKIE_PATH = '/'
     JWT_REFRESH_COOKIE_PATH = '/'
     JWT_COOKIE_CSRF_PROTECT = False
-    JWT_CSRF_IN_COOKIES = False
-    JWT_REFRESH_TOKEN_ENABLED = True
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    # Para desarrollo en localhost (HTTP), SECURE debe ser False.
+    # El navegador puede ser permisivo con SameSite='None' y Secure=False solo en localhost.
     JWT_COOKIE_SECURE = False
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)
-    JWT_COOKIE_DOMAIN = 'localhost'
+    # Define explícitamente el dominio para desarrollo
+    JWT_COOKIE_DOMAIN = None # Al ser None, el navegador usará el dominio actual (ej. localhost)
+
 
 class ProductionConfig(Config):
     DEBUG = False 
-
+    
+    # Esta validación es una EXCELENTE práctica de seguridad. ¡Muy bien hecho!
     _production_jwt_secret = os.getenv('JWT_SECRET_KEY')
     if not _production_jwt_secret:
-        # Esto es lo que debe pasar en producción si la ENV no está seteada.
-        raise ValueError("JWT_SECRET_KEY environment variable MUST be set in production for security.")
-    JWT_SECRET_KEY = _production_jwt_secret # Asignar la clave validada
+        raise ValueError("La variable de entorno JWT_SECRET_KEY DEBE estar definida en producción.")
+    JWT_SECRET_KEY = _production_jwt_secret
 
-    JWT_COOKIE_SECURE = True # Siempre True en producción (HTTPS)
-
+    # En producción, SIEMPRE debe ser True porque usarás HTTPS.
+    JWT_COOKIE_SECURE = True
+    
+    # Esta validación también es excelente.
     _production_jwt_cookie_domain = os.getenv('JWT_COOKIE_DOMAIN')
     if not _production_jwt_cookie_domain:
-        raise ValueError("JWT_COOKIE_DOMAIN environment variable MUST be set in production for cookie security.")
+        raise ValueError("La variable de entorno JWT_COOKIE_DOMAIN DEBE estar definida en producción.")
     JWT_COOKIE_DOMAIN = _production_jwt_cookie_domain
 
-    # JWT_ACCESS_TOKEN_EXPIRES y JWT_REFRESH_TOKEN_EXPIRES deberían estar aquí con valores de producción
-    # (ej. 30 minutos y 7 días respectivamente).
-    # Como tienes 1 día y 30 días, eso está bien.
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    # Tiempos de expiración más cortos y seguros para producción.
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
 
+# El diccionario de configuración se ve perfecto.
 config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
