@@ -163,10 +163,10 @@ def create_app(config_name='production'):
     print("=" * 30, flush=True)
     
     cors_origins = [
-        "http://localhost",
-        "https://localhost", 
+        "http://localhost:5173", 
         "https://mifinca.isladigital.xyz"
     ]
+
     print(f"CORS Origins: {cors_origins}", flush=True)
     print("=" * 30, flush=True)
 
