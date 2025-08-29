@@ -70,7 +70,7 @@ class ProductionConfig(Config):
 
     # CORS - Orígenes de producción
     # Incluye el dominio y el subdominio si tu frontend está en un subdominio
-    CORS_ORIGINS = ["https://isladigital.xyz", "https://mifinca.isladigital.xyz"]
+    CORS_ORIGINS = ["https://isladigital.xyz", "https://mifinca.isladigital.xyz", "http://localhost:5173"]
 
 # Diccionario de configuración final
 config = {
