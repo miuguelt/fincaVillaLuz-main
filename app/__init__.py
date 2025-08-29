@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -10,13 +10,10 @@ import jwt as pyjwt
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # ====================================================================
-# 1. Inicialización de extensiones (sinlazarlas a la app aún)
+# 1. Inicialización de extensiones (sin enlazarlas a la app aún)
 # ====================================================================
 db = SQLAlchemy()
 jwt = JWTManager()
-
-# No inicializamos CORS aquí, lo haremos dentro de create_app
-# para usar la configuración dinámica de la clase de configuración
 
 # ====================================================================
 # 2. Funciones de ayuda y configuración modular
@@ -74,9 +71,11 @@ def configure_jwt_handlers():
 
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
+        """Agrega claims adicionales para debugging"""
         return {
             'server_time_utc': datetime.now(timezone.utc).isoformat(),
-            'server_env': request.app.config.get('CONFIG_NAME')
+            # CAMBIO CRUCIAL: Usamos current_app en lugar de request.app
+            'server_env': current_app.config.get('CONFIG_NAME') 
         }
 
 # ====================================================================
@@ -85,25 +84,25 @@ def configure_jwt_handlers():
 def create_app(config_name='production'):
     app = Flask(__name__)
     
-    # 3.1. Añade ProxyFix para entornos con proxies como Vercel o Nginx
+    # Añade ProxyFix para entornos con proxies como Vercel o Nginx
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
     
     app_config = config.get(config_name, 'default')
     app.config.from_object(app_config)
     app.config['CONFIG_NAME'] = config_name
 
-    # 3.2. Configura el logging (antes de cualquier otra cosa)
+    # Configura el logging (antes de cualquier otra cosa)
     configure_logging(app)
     logger = logging.getLogger(__name__)
 
     logger.info("Initializing Flask app...")
     logger.debug(f"Using configuration: {config_name}")
 
-    # 3.3. Inicializa y enlaza las extensiones con la app
+    # Inicializa y enlaza las extensiones con la app
     db.init_app(app)
     jwt.init_app(app)
 
-    # 3.4. Configura CORS con los orígenes definidos en la clase de configuración
+    # Configura CORS con los orígenes definidos en la clase de configuración
     CORS(
         app,
         origins=app.config['CORS_ORIGINS'],
@@ -112,10 +111,10 @@ def create_app(config_name='production'):
         supports_credentials=True
     )
 
-    # 3.5. Configura los handlers de JWT
+    # Configura los handlers de JWT
     configure_jwt_handlers()
 
-    # 3.6. Registra los blueprints
+    # Registra los blueprints
     from app.routes import (
         userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes,
         controlRoutes, diseasesRoutes, fieldsRoutes, foodTypesRoutes, geneticImprovementsRoutes,
@@ -142,7 +141,7 @@ def create_app(config_name='production'):
     app.register_blueprint(vaccinationsRoutes.bp)
     app.register_blueprint(auth.bp)
     
-    # 3.7. Middleware y endpoint de debugging
+    # Middleware y endpoint de debugging
     @app.before_request
     def log_request_info():
         if app.config.get('DEBUG', False):
