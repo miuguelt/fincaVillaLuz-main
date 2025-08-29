@@ -45,7 +45,7 @@ class DevelopmentConfig(Config):
     JWT_COOKIE_DOMAIN = None
     
     # CORS - Orígenes de desarrollo
-    CORS_ORIGINS = ["http://localhost:5173"]
+    CORS_ORIGINS = ["https://localhost:5173"]
 
 class ProductionConfig(Config):
     """Configuración para producción (HTTPS)."""
@@ -70,7 +70,7 @@ class ProductionConfig(Config):
 
     # CORS - Orígenes de producción
     # Incluye el dominio y el subdominio si tu frontend está en un subdominio
-    CORS_ORIGINS = ["https://isladigital.xyz", "https://mifinca.isladigital.xyz", "http://localhost:5173"]
+    CORS_ORIGINS = ["https://isladigital.xyz", "https://mifinca.isladigital.xyz", "https://localhost:5173", "http://localhost:5173"]
 
 # Diccionario de configuración final
 config = {
