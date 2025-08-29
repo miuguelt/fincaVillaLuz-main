@@ -6,28 +6,27 @@ from datetime import timezone, datetime
 from config import config
 import logging
 import sys
-import jwt as pyjwt # Usamos un alias para evitar conflictos con flask_jwt_extended
+import jwt as pyjwt
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # ====================================================================
 # 1. Inicialización de extensiones (sinlazarlas a la app aún)
 # ====================================================================
 db = SQLAlchemy()
 jwt = JWTManager()
-cors = CORS()
+
+# No inicializamos CORS aquí, lo haremos dentro de create_app
+# para usar la configuración dinámica de la clase de configuración
 
 # ====================================================================
 # 2. Funciones de ayuda y configuración modular
 # ====================================================================
 def configure_logging(app):
     """Configura el sistema de logging de la aplicación."""
-    # Accede al nivel de log definido en la configuración
     log_level = app.config.get('LOG_LEVEL', logging.INFO)
-    
-    # Define los handlers de log
     handlers = [
         logging.StreamHandler(sys.stdout)
     ]
-    # Si la configuración lo permite, añade un FileHandler
     if app.config.get('LOG_FILE_ENABLED', False):
         log_file = app.config.get('LOG_FILE', 'app.log')
         handlers.append(logging.FileHandler(log_file))
@@ -37,11 +36,10 @@ def configure_logging(app):
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=handlers
     )
-    logging.getLogger('werkzeug').setLevel(logging.INFO) # Silencia logs de werkzeug si están muy bajos
+    logging.getLogger('werkzeug').setLevel(logging.INFO)
 
 def configure_jwt_handlers():
     """Configura los handlers para errores de JWT. Se llama después de jwt.init_app()."""
-    
     logger = logging.getLogger(__name__)
 
     @jwt.expired_token_loader
@@ -50,9 +48,7 @@ def configure_jwt_handlers():
         exp_utc = datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
         now_utc = datetime.now(timezone.utc)
         seconds_ago = int((now_utc - exp_utc).total_seconds())
-
         logger.warning(f"Expired token: expired {seconds_ago} seconds ago. Payload: {jwt_payload}")
-
         return jsonify({
             'msg': 'Token has expired',
             'expired_at_utc': exp_utc.isoformat(),
@@ -78,7 +74,6 @@ def configure_jwt_handlers():
 
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
-        """Agrega claims adicionales para debugging"""
         return {
             'server_time_utc': datetime.now(timezone.utc).isoformat(),
             'server_env': request.app.config.get('CONFIG_NAME')
@@ -89,11 +84,13 @@ def configure_jwt_handlers():
 # ====================================================================
 def create_app(config_name='production'):
     app = Flask(__name__)
-    app_config = config.get(config_name, 'default')
     
-    # 3.1. Carga la configuración desde el objeto
+    # 3.1. Añade ProxyFix para entornos con proxies como Vercel o Nginx
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
+    
+    app_config = config.get(config_name, 'default')
     app.config.from_object(app_config)
-    app.config['CONFIG_NAME'] = config_name # Almacena el nombre para usarlo en los logs
+    app.config['CONFIG_NAME'] = config_name
 
     # 3.2. Configura el logging (antes de cualquier otra cosa)
     configure_logging(app)
@@ -105,16 +102,19 @@ def create_app(config_name='production'):
     # 3.3. Inicializa y enlaza las extensiones con la app
     db.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app)
 
-    # 3.4. Configura los handlers de JWT de forma modular
+    # 3.4. Configura CORS con los orígenes definidos en la clase de configuración
+    CORS(
+        app,
+        origins=app.config['CORS_ORIGINS'],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization"],
+        supports_credentials=True
+    )
+
+    # 3.5. Configura los handlers de JWT
     configure_jwt_handlers()
 
-    # 3.5. Configura CORS
-    # Las opciones de CORS ya están en la instancia de 'cors' si usas el método init_app
-    # Por lo tanto, no es necesario llamar a CORS(app, ...).init_app(app)
-    # Solo necesitas las opciones en la configuración o pasarlas al constructor
-    
     # 3.6. Registra los blueprints
     from app.routes import (
         userRoutes, animalDiseasesRoutes, animalFieldsRoutes, animalsRoutes, breedsRoutes,
@@ -142,10 +142,9 @@ def create_app(config_name='production'):
     app.register_blueprint(vaccinationsRoutes.bp)
     app.register_blueprint(auth.bp)
     
-    # 3.7. Middleware para debugging (ahora con logging)
+    # 3.7. Middleware y endpoint de debugging
     @app.before_request
     def log_request_info():
-        # Solo loggea si la configuración está en DEBUG
         if app.config.get('DEBUG', False):
             if any(path in request.path for path in ['/login', '/refresh', '/protected', '/debug']):
                 logger.debug(f"REQUEST: {request.method} {request.path}")
@@ -153,7 +152,6 @@ def create_app(config_name='production'):
                 if request.cookies:
                     logger.debug(f"Cookies present: {list(request.cookies.keys())}")
     
-    # 3.8. Endpoint para debugging completo
     @app.route('/debug-complete', methods=['GET'])
     def debug_complete():
         access_token = request.cookies.get('access_token_cookie')
